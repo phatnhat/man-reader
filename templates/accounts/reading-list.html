@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div id="main-wrapper">
+    <div class="container">
+        <div id="mw-2col">
+            <!--Begin: main-content-->
+            <div id="main-content">
+                <!--Begin: Section Manga list-->
+                <section class="block_area block_area_fav">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Reading List</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="fav-tabs mb-4">
+                        <ul class="nav nav-tabs pre-tabs pre-tabs-min">
+                            <li class="nav-item">
+                                <a href="{% url "reading-list" %}" class="nav-link {% if not type %}active{% endif %}">All</a>
+                            </li>
+                            {% for rl in reading_list %}
+                                <li class="nav-item">
+                                    <a href="{% url "reading-list" %}?type={{rl.id}}" class="nav-link {% if type and type == rl.id %}active{% endif %}">{{ rl.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="item-order">
+                            <div class="bhs-item">
+                                <div data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="bhsi-name"> {{ sort_name }} <i class="fas fa-angle-down ml-2"></i>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-model dropdown-menu-normal" aria-labelledby="ssc-list" x-placement="bottom-start" style="position: absolute; transform: translate3d(802px, 87px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                    {% for sl in sort_list %}
+                                        <a class="dropdown-item {% if sort == sl.slug %}added{% endif %}" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sl.slug}}">{{ sl.name }} {% if sort == sl.slug %}<i class="fas fa-check ml-2"></i>{% endif %}</a>
+                                    {% endfor %}
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="manga_list-sbs">
+                        <div class="mls-wrap">
+                            {% for book in page_obj %}
+                                <div class="item item-spc">
+                                    <div class="dr-fav" id="reading-list-info">
+                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-circle btn-light btn-fav">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                                            {% for rl in reading_list %}
+                                                <a class="rl-item dropdown-item {% if rl.id == book.reading_list %}added{% endif %}" data-type="{{rl.id}}" data-book-id="{{book.id}}" data-page="reading-list" href="javascript:;">
+                                                    {{rl.name}} {% if rl.id == book.reading_list %}<i class="fas fa-check ml-2"></i>{% endif %}
+                                                </a>
+                                            {% endfor %}
+                                            <a class="rl-item dropdown-item text-danger" href="javascript:;" data-book-id="{{book.id}}" data-type="0" data-page="reading-list">Remove</a>
+                                        </div>
+                                    </div>
+                                    <a class="manga-poster" href="{% url "book-detail" book.slug %}">
+                                        <span class="tick tick-item tick-lang">EN</span>
+                                        <img src="{{book.cover_photo.url}}" class="manga-poster-img ls-is-cached lazyloaded" alt="{{book.name}}">
+                                    </a>
+                                    <div class="manga-detail">
+                                        <h3 class="manga-name">
+                                            <a href="{% url "book-detail" book.slug %}" title="{{book.name}}">{{book.name}}</a>
+                                        </h3>
+                                        <div class="fd-infor">
+                                            <span class="fdi-item fdi-cate">
+                                                {% for genre in book.genres.all|slice:":2" %}
+                                                    {% if forloop.last %}
+                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                    {% else %}
+                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                {% endif %}
+                                            {% endfor %}
+                                            </span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div id="spc-chap-8" class="tab-pane active show">
+                                                <div class="fd-list">
+                                                    {% for chapter in book.list_chapters|slice:":3" %}
+                                                        <div class="fdl-item">
+                                                            <div class="chapter">
+                                                                <a href="{% url "read-book" book.slug chapter.chap|floatformat %}">
+                                                                    <i class="fas fa-book mr-2"></i>Chap {{ chapter.chap|floatformat }} [EN]
+                                                                </a>
+                                                            </div>
+                                                            <div class="release-time"></div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            {% endfor %}
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="pre-pagination mt-4">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-lg justify-content-center">
+                                    {% if page_obj %}
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item"><a title="First" class="page-link" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sort}}&amp;page=1">«</a></li>
+                                            <li class="page-item"><a title="Previous" class="page-link" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sort}}&amp;page={{ page_obj.previous_page_number }}">‹</a></li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if num > page_obj.number|add:'-1'|add:'-2' and num < page_obj.number|add:'-1'|add:4 %}
+                                                {% if num == page_obj.number %}
+                                                    <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                                {% else %}
+                                                    <li class="page-item"><a title="Page 2" class="page-link" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sort}}&amp;page={{num}}">{{ num }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item"><a title="Next" class="page-link" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sort}}&amp;page={{ page_obj.next_page_number }}">›</a></li>
+                                            <li class="page-item"><a title="Last" class="page-link" href="{% url "reading-list" %}?type={{type}}&amp;sort={{sort}}&amp;page={{ page_obj.paginator.num_pages }}">»</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </section>
+                <!--End: Section Manga list-->
+                <div class="clearfix"></div>
+            </div>
+            <!--/End: main-content-->
+            <!--Begin: main-sidebar-->
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-profile">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Profile Menu</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="menu-profiles">
+                            <ul class="ulclear">
+                                <li class="">
+                                    <a href="{% url "profile" %}" class="mp-item">
+                                        <i class="fas fa-user mr-3"></i>Profile </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/continue-reading" class="mp-item">
+                                        <i class="fas fa-glasses mr-3"></i>Continue Reading </a>
+                                </li>
+                                <li class="active">
+                                    <a href="{% url "reading-list" %}" class="mp-item">
+                                        <i class="fas fa-bookmark mr-3"></i>Reading List </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/notifications" class="mp-item">
+                                        <i class="fas fa-bell mr-3"></i>Notifications </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!--/End: main-sidebar-->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+{% include "includes/footer.html" %}
+{% endblock content %}

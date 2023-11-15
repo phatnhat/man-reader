@@ -1,0 +1,120 @@
+{% load static %}
+<div id="sub-header" class="home-sub-header">
+    <div class="container">
+        <div class="sh-left">
+            <div class="float-left">
+                <a href="{% url "random" %}" class="sh-item">
+                    <i class="fas fa-glasses mr-2"></i>Read Random
+                </a>
+            </div>
+        </div>
+        <div class="sh-right">
+            <div class="float-left">
+                <div class="sh-item mr-3">
+                    <strong>Follow us :</strong>
+                </div>
+                <a target="_blank" href="https://www.reddit.com/r/MangaReaderOfficial" class="sh-item mr-3">
+                    <i class="fab fa-reddit-alien mr-2"></i>Reddit
+                </a>
+                <a target="_blank" href="https://twitter.com/WeMangaReader" class="sh-item mr-3">
+                    <i class="fab fa-twitter mr-2"></i>Twitter
+                </a>
+                <a target="_blank" href="https://discord.gg/Bvc5mVcUqE" class="sh-item">
+                    <i class="fab fa-discord mr-2"></i>Discord
+                </a>
+                <div class="spacing"></div>
+                <div class="float-right">
+                    <a class="sh-item sb-uimode" id="toggle-mode">
+                        <i class="fas fa-moon mr-2"></i>
+                        <span class="text-dm">Dark Mode</span>
+                        <span class="text-lm">Light Mode</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="header" class="{% if request.path == '/' or request.path == '/home' %}home-header{% endif %}">
+    <div class="container">
+        <div id="mobile_menu" class=""><i class="fa fa-bars"></i></div>
+        <div id="mobile_search"><i class="fa fa-search"></i></div>
+        <a href="/" id="logo">
+            <img src="{% static "imgs/logo.png" %}" alt="logo">
+        </a>
+        <div id="header_menu">
+            <ul class="nav header_menu-list">
+                <li class="nav-item"><a href="/completed" title="Completed">Completed</a></li>
+                <li class="nav-item">
+                    <a href="javascript:;" title="Types">Types<i class="fas fa-angle-down ml-2"></i></a>
+                    <div class="header_menu-sub" style="display: none;">
+                        <ul class="sub-menu">
+                                {% for type in typies %}
+                                    <li><a href="{% url "type" type.slug %}">{{ type.name }}</a></li> 
+                                {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:;" title="Types">Genres<i class="fas fa-angle-down ml-2"></i></a>
+                    <div class="header_menu-sub grid" style="display: none;">
+                        <ul class="sub-menu">
+                                {% for genre in genres %}
+                                    <li><a href="{% url "genre" genre.slug %}">{{ genre.name }}</a></li> 
+                                {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item"><a href="/az-list" title="A-Z List">A-Z List</a></li>
+                <li class="nav-item"><a href="#" target="_blank" title="News">News</a></li>
+            </ul>
+        </div>
+        <div id="header_right" class="user-logged">
+            <div id="search">
+                <div class="search-content">
+                    <form action="/search" autocomplete="off">
+                        <a href="{% url "filter" %}" class="filter-icon">FILTER</a>
+                        <input type="text" name="keyword" class="form-control search-input" placeholder="Search manga...">
+                        <button type="submit" class="search-icon"><i class="fas fa-search"></i></button>
+                    </form>
+                    <div class="nav search-result-pop" id="search-suggest" style="display: none;">
+                        <div class="loading-relative" id="search-loading" style="min-height:60px;display: none;">
+                            <div class="loading">
+                                <div class="span1"></div>
+                                <div class="span2"></div>
+                                <div class="span3"></div>
+                            </div>
+                        </div>
+                        <div class="result"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="login-state" style="float: left;">
+                <div id="user-slot">
+                    <div class="header_right-user {% if user.is_authenticated %}logged{% endif %}">
+                        {% if user.is_authenticated %}
+                            <div class="dropdown">
+                                <div class="btn-avatar" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="{{ user.profile.avatar.image.url }}" alt="{{ user.name }}">
+                                </div>
+                                <div id="user_menu" class="dropdown-menu dropdown-menu-model">
+                                    <a class="dropdown-item" href="{% url "profile" %}"><i class="fas fa-user mr-2"></i>Profile</a>
+                                    <a class="dropdown-item" href="/user/continue-reading"><i class="fas fa-glasses mr-2"></i>Continue
+                                        Reading</a>
+                                    <a class="dropdown-item" href="{% url "reading-list" %}"><i class="fas fa-bookmark mr-2"></i>Reading List</a>
+                                    <a class="dropdown-item" href="/user/notifications"><i class="fas fa-bell mr-2"></i>Notifications</a>
+                                    <a class="dropdown-item" href="/user/mal"><i class="fas fa-file-import mr-2"></i>MAL</a>
+                                    <a class="dropdown-item di-bottom" href="{% url "logout" %}">Logout<i class="fas fa-arrow-right ml-2 mr-1"></i></a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <a data-toggle="modal" data-target="#modal-auth" class="btn-user btn btn-login"><i class="fas fa-user-circle mr-2"></i>Member</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Home - ManReader
+{% endblock title %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div class="deslide-wrap">
+    <div class="container">
+        <div id="slider" class="swiper-container-fade swiper-container-initialized swiper-container-horizontal">
+            <div class="swiper-wrapper">
+                {% for deslide in deslides %}
+                <div class="swiper-slide">
+                    <div class="deslide-item">
+                        <a href="{% url "book-detail" deslide.slug %}" class="deslide-cover">
+                            <img class="manga-poster-img" src="{{ deslide.cover_photo.url }}" alt="{{ deslide.name }}"></a>
+                        <div class="deslide-poster">
+                            <a href="{% url "book-detail" deslide.slug %}" class="manga-poster">
+                                <img src="{{ deslide.cover_photo.url }}" class="manga-poster-img" alt="{{ deslide.name }}">
+                            </a>
+                        </div>
+                        <div class="deslide-item-content">
+                            {% if deslide.list_chapters %}
+                                <div class="desi-sub-text">Chapter: {{ deslide.last_chapter.chap|floatformat }} [EN]</div> 
+                            {% endif %}
+                            <div class="desi-head-title">
+                                <a title="{{ deslide.name }}" href="{% url "book-detail" deslide.slug %}">{{ deslide.name }}</a>
+                            </div>
+                            <div class="sc-detail">
+                                <div class="scd-item mb-3">
+                                    {{ deslide.description }}
+                                </div>
+                                <div class="scd-item scd-genres">
+                                    {% for genre in deslide.genres.all %}
+                                        <span>{{ genre.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="desi-buttons">
+                                <a href="{% url "read-book-first" deslide.slug %}" class="btn btn-slide-read mr-2">Read Now</a>
+                                <a href="{% url "book-detail" deslide.slug %}" class="btn btn-slide-info">View Info</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="swiper-navigation">
+                <div class="swiper-button swiper-button-next" tabindex="0" role="button" aria-label="Next slide"><i class="fas fa-angle-right"></i></div>
+                <div class="swiper-button swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide"><i class="fas fa-angle-left"></i></div>
+            </div>
+
+        </div>
+    </div>
+</div>  
+
+<div id="text-home">
+    <div class="container">
+        <div class="text-home">
+            <div class="text-home-main">
+                ManReader is a Free website to download and read manga online. We have a big library of over
+                600,000 manga chapters in all genres that are available to read or download for FREE without
+                registration. The manga is updated daily to make sure no one will ever miss the latest chapter on
+                their favorite manga. If you like the website, please bookmark it and help us to spread the words.
+                Thank you!
+            </div>
+            <div class="social-home-block">
+                <div class="shb-icon" style="background-image: url({% static "imgs/komi-cant-communicate-komi.gif" %})"></div>
+                <div class="shb-left">
+                    <strong>Share Mangareader</strong> to your friends
+                </div>
+                <div class="sharethis-inline-share-buttons st-center st-has-labels  st-inline-share-buttons st-animated" id="st-1">
+                    <div class="st-btn st-first" data-network="telegram" style="display: inline-block;">
+                        <img alt="telegram sharing button" src="{% static "imgs/telegram.svg" %}">
+                        <span class="st-label">Share</span>
+                    </div>
+                    <div class="st-btn" data-network="twitter" style="display: inline-block;">
+                        <img alt="twitter sharing button" src="{% static "imgs/twitter.svg" %}">
+                        <span class="st-label">Tweet</span>
+                    </div>
+                    <div class="st-btn" data-network="facebook" style="display: inline-block;">
+                        <img alt="facebook sharing button" src="{% static "imgs/facebook.svg" %}">
+                        <span class="st-label">Share</span>
+                    </div>
+                    <div class="st-btn" data-network="reddit" style="display: inline-block;">
+                        <img alt="reddit sharing button" src="{% static "imgs/reddit.svg" %}">
+                        <span class="st-label">Share</span>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="manga-trending">
+    <div class="container">
+        <section class="block_area block_area_trending mb-0">
+            <div class="block_area-header">
+                <div class="bah-heading">
+                    <h2 class="cat-heading">Trending</h2>
+                </div>
+            </div>
+            <div class="block_area-content">
+                <div class="trending-list" id="trending-home">
+                    <div class="swiper-container swiper-container-initialized swiper-container-horizontal">
+                        <div class="swiper-wrapper">
+                            {% for trend in trends %}
+                            <div class="swiper-slide">
+                                <div class="item">
+                                    <div class="manga-poster">
+                                        <a class="link-mask" href="{% url "book-detail" trend.slug %}"></a> 
+                                        <span class="tick tick-item tick-lang">EN</span>        
+                                        <div class="mp-desc">
+                                            <p class="alias-name mb-2"><strong>{{ trend.name }}</strong></p>
+                                            <p><i class="fas fa-language mr-2"></i>{{ trend.origin_name }}</p>
+                                            <p><i class="fas fa-star mr-2"></i>{{ trend.vote_star }}</p>
+                                            <p><i class="fas fa-globe mr-2"></i>EN</p> 
+                                            <p><a href="{% url "type" trend.type.slug %}"><i class="fas fa-book-journal-whills mr-2"></i><strong>{{ trend.type.name }}</strong></a></p>
+                                            {% if trend.list_chapters %}
+                                                <p><a href="{% url "read-book" trend.slug trend.last_chapter.chap|floatformat %}"><i class="far fa-file-alt mr-2"></i><strong>Chap {{ trend.last_chapter.chap|floatformat }} [EN]</strong></a></p>
+                                            {% endif %}
+                                            <div class="mpd-buttons">
+                                                <a href="{% url "read-book-first" trend.slug %}" class="btn btn-warning text-dark btn-sm btn-block"><i class="fas fa-glasses mr-2"></i>Read Now</a>
+                                                <a href="{% url "book-detail" trend.slug %}" class="btn btn-light btn-sm btn-block"><i class="fas fa-info-circle mr-2"></i>Info</a>
+                                            </div>
+                                        </div>
+                                        <img src="{{ trend.cover_photo.url }}" width="20" class="manga-poster-img ls-is-cached lazyloaded" alt="{{ trend.name }}">
+                                    </div>
+                                    
+                                        <div class="number"><span>{{ forloop.counter|stringformat:"02d" }}</span>
+                                            <div class="anime-name">{{ trend.name }}</div>
+                                        </div>
+                                    
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="trending-navi">
+                        <div class="navi-next"><i class="fas fa-angle-right"></i></div>
+                        <div class="navi-prev"><i class="fas fa-angle-left"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="category_block category_block-home">
+    <div class="container">
+        <div class="c_b-wrap">
+            <div class="c_b-list">
+                <div class="cbl-row">
+                    <div class="item item-focus focus-01"><a href="/latest-updated" title=""><i class="mr-1">⚡</i>
+                            Latest Updated</a></div>
+                    <div class="item item-focus focus-02"><a href="/new-release" title=""><i class="mr-1">✌</i> New Release</a></div>
+                    <div class="item item-focus focus-04"><a href="/most-viewed" title=""><i class="mr-1">🔥</i>
+                            Most Viewed</a></div>
+                    <div class="item item-focus focus-05"><a href="/completed" title=""><i class="mr-1">✅</i>
+                            Completed</a></div>
+                </div>
+                <div class="cbl-row">
+                        {% for genre in genres %}
+                        <div class="item">
+                            <a href="{% url "genre" genre.slug %}" title="{{ genre.name }}">{{ genre.name }}</a>
+                        </div>
+                        {% endfor %}
+                    <div class="item item-more"><a class="im-toggle">+ More</a></div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="manga-continue"></div>
+<div id="manga-featured">
+    <div class="container">
+        <div class="block_area block_area_featured">
+            <div class="block_area-header">
+                <div class="bah-heading">
+                    <h2 class="cat-heading">Recommended</h2>
+                </div>
+            </div>
+            <div class="block_area-content">
+                <div class="featured-list" id="featured-03">
+                    
+                    <div class="swiper-container swiper-container-initialized swiper-container-horizontal">
+                        <div class="swiper-wrapper">
+                            {% for recommend in recommends %}
+                            <div class="swiper-slide">
+                                <div class="mg-item-basic">
+                                    <div class="manga-poster">
+                                        <a class="link-mask" href="{% url "book-detail" recommend.slug %}"></a>
+                                        <span class="tick tick-item tick-lang">EN</span>                  
+                                        <div class="mp-desc">
+                                            <p class="alias-name mb-2"><strong>{{ recommend.name }}</strong></p>
+                                            <p><i class="fas fa-language mr-2"></i>{{ recommend.origin_name }}</p>
+                                            <p><i class="fas fa-star mr-2"></i>7.2</p>
+                                            <p><i class="fas fa-globe mr-2"></i>EN</p>
+                                            <p><a href="{% url "book-detail" recommend.slug %}"><i class="fas fa-book-journal-whills mr-2"></i><strong>{{ recommend.type.name }}</strong></a></p>
+                                            {% if recommend.list_chapters %}
+                                                <p>
+                                                    <a href="{% url "read-book" recommend.slug recommend.last_chapter.chap|floatformat %}">
+                                                        <i class="far fa-file-alt mr-2"></i>
+                                                        <strong>Chap {{ recommend.last_chapter.chap|floatformat }} [EN]</strong>
+                                                    </a>
+                                                </p>
+                                            {% endif %}
+                                            <div class="mpd-buttons">
+                                                <a href="{% url "read-book-first" recommend.slug %}" class="btn btn-warning text-dark btn-sm btn-block"><i
+                                                        class="fas fa-glasses mr-2"></i>Read Now</a>
+                                                <a href="{% url "book-detail" recommend.slug %}" class="btn btn-light btn-sm btn-block"><i
+                                                        class="fas fa-info-circle mr-2"></i>Info</a>
+                                            </div>
+                                        </div>
+                                        <img src="{{ recommend.cover_photo.url }}"
+                                            class="manga-poster-img lazyload" alt="{{ recommend.name }}" />
+                                    </div>
+                    
+                                    <div class="manga-detail">
+                                        <h3 class="manga-name">
+                                            <a href="{% url "book-detail" recommend.slug %}" title="{{ recommend.name }}">{{ recommend.name }}</a>
+                                        </h3>
+                                        <div class="fd-infor">
+                                            {% for genre in recommend.genres.all|slice:":2" %}
+                                            {% if forloop.last %} 
+                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a> 
+                                            {% else %}
+                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                            {% endif %}
+                                            
+                                            {% endfor %}
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                    
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="clearfix"></div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                    </div>
+
+                    <div class="featured-navi">
+                        <div class="navi-next"><i class="fas fa-angle-right"></i></div>
+                        <div class="navi-prev"><i class="fas fa-angle-left"></i></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="main-wrapper">
+    <div class="container">
+        <div id="mw-2col">
+            <div id="main-content">
+                <section class="block_area block_area_home">
+                    <div class="block_area-header block_area-header-tabs">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Latest Updates</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-content">
+                        <div id="latest-chap" class="tab-pane active show">
+                            <div class="manga_list-sbs">
+                                <div class="mls-wrap">
+                                    {% for lc in lastest_chaps %}
+                                    <div class="item item-spc">
+                                        <a class="manga-poster" href="{% url "book-detail" lc.slug %}">
+                                            <span class="tick tick-item tick-lang">EN</span>
+                                            <img src="{{ lc.cover_photo.url }}"
+                                                class="manga-poster-img ls-is-cached lazyloaded" alt="{{ lc.name }}">
+                                        </a>
+                                        <div class="manga-detail">
+                                            <h3 class="manga-name">
+                                                <a href="{% url "book-detail" lc.slug %}" title="{{ lc.name }}">{{ lc.name }}</a>
+                                            </h3>
+                                            <div class="fd-infor">
+                        
+                                                <span class="fdi-item fdi-cate">
+                                                    {% for genre in lc.genres.all|slice:":3" %}
+                                                    {% if forloop.last %}
+                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                    {% else %}
+                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                                <div class="clearfix"></div>
+                                            </div>
+                        
+                                            <div class="fd-list">
+                                                {% for chapter in lc.list_chapters|slice:":3" %}
+                                                <div class="fdl-item">
+                                                    <div class="chapter">
+                                                        <a href="{% url "read-book" lc.slug chapter.chap|floatformat %}">
+                                                            <i class="far fa-file-alt mr-2"></i>Chap {{ chapter.chap|floatformat }} [EN]
+                                                        </a>
+                                                    </div>
+                                                    <div class="release-time"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-realtime">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Most Viewed</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="cbox cbox-list cbox-realtime">
+                            <div class="cbox-content">
+                                <ul class="nav nav-pills nav-fill nav-tabs anw-tabs">
+                                    <li class="nav-item"><a data-toggle="tab" href="#chart-today" class="nav-link active show">Today</a></li>
+                                    <li class="nav-item"><a data-toggle="tab" href="#chart-week" class="nav-link">Week</a></li>
+                                    <li class="nav-item"><a data-toggle="tab" href="#chart-month" class="nav-link">Month</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="chart-today" class="tab-pane active show">
+                                        <div class="featured-block-ul featured-block-chart">
+                                            <ul class="ulclear">
+                                                {% for chart in chart_today %}
+                                                <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                    <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                    <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                        <img src="{{ chart.cover_photo.url }}"
+                                                            class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                    </a>
+                                                    <div class="manga-detail">
+                                                        <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                        <div class="fd-infor">
+                                                            <span class="fdi-item">EN</span>
+                                                            <span class="dot"></span>
+                                                            <span class="fdi-item fdi-cate">
+                                                                {% for genre in chart.genres.all|slice:":2" %}
+                                                                {% if forloop.last %}
+                                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                {% else %}
+                                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                {% endif %}
+                                                                {% endfor %}
+                                                            </span>
+                                                            <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                            <div class="d-block">
+                                                                <span class="fdi-item fdi-chapter">
+                                                                    {% if chart.list_chapters %}
+                                                                        <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                            <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                        </a>
+                                                                    {% endif %}
+                                                                </span>       
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                    <div id="chart-week" class="tab-pane">
+                                        <div class="featured-block-ul featured-block-chart">
+                                            <ul class="ulclear">
+                                                {% for chart in chart_week %}
+                                                <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                    <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                    <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                        <img src="{{ chart.cover_photo.url }}"
+                                                            class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                    </a>
+                                                    <div class="manga-detail">
+                                                        <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                        <div class="fd-infor">
+                                                            <span class="fdi-item">EN</span>
+                                                            <span class="dot"></span>
+                                                            <span class="fdi-item fdi-cate">
+                                                                {% for genre in chart.genres.all|slice:":2" %}
+                                                                    {% if forloop.last %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                    {% else %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </span>
+                                                            <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                            <div class="d-block">
+                                                                <span class="fdi-item fdi-chapter">
+                                                                    {% if chart.list_chapters %}
+                                                                        <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                            <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                        </a>
+                                                                    {% endif %}
+                                                                </span>       
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                    <div id="chart-month" class="tab-pane">
+                                        <div class="featured-block-ul featured-block-chart">
+                                            <ul class="ulclear">
+                                                {% for chart in chart_month %}
+                                                <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                    <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                    <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                        <img src="{{ chart.cover_photo.url }}"
+                                                            class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                    </a>
+                                                    <div class="manga-detail">
+                                                        <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                        <div class="fd-infor">
+                                                            <span class="fdi-item">EN</span>
+                                                            <span class="dot"></span>
+                                                            <span class="fdi-item fdi-cate">
+                                                                {% for genre in chart.genres.all|slice:":2" %}
+                                                                {% if forloop.last %}
+                                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                {% else %}
+                                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                {% endif %}
+                                                                {% endfor %}
+                                                            </span>
+                                                            <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                            <div class="d-block">
+                                                                <span class="fdi-item fdi-chapter">
+                                                                    {% if chart.list_chapters %}
+                                                                        <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                            <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                        </a>
+                                                                    {% endif %}
+                                                                </span>       
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="clearfix"></div>
+
+            <section class="block_area block_area_featured">
+                <div class="block_area-header">
+                    <div class="bah-heading">
+                        <h2 class="cat-heading">Completed</h2>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="block_area-content">
+                    <div class="featured-list" id="featured-04">
+                        <div class="swiper-container swiper-container-initialized swiper-container-horizontal">
+                            <div class="swiper-wrapper" style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);">
+                                {% for comp in completed %}
+                                <div class="swiper-slide" style="width: 156.875px; margin-right: 15px;">
+                                    <div class="mg-item-basic">
+                                        <div class="manga-poster">
+                                            <a class="link-mask" href="{% url "book-detail" comp.slug %}"></a>
+                                            <span class="tick tick-item tick-lang">EN</span>
+                                            <div class="mp-desc">
+                                                <p class="alias-name mb-2"><strong>{{ comp.name }}</strong></p>
+                                                <p><i class="fas fa-language mr-2"></i>{{ comp.origin_name }}</p>
+                                                <p><i class="fas fa-star mr-2"></i>7.2</p>
+                                                <p><i class="fas fa-globe mr-2"></i>EN</p>
+                                                <p><a href="{% url "book-detail" comp.slug %}"><i class="fas fa-book-journal-whills mr-2"></i><strong>{{ comp.type.name }}</strong></a></p>
+                                                {% if comp.list_chapters %}
+                                                    <p><a href="{% url "read-book" comp.slug comp.last_chapter.chap|floatformat %}">
+                                                        <i class="far fa-file-alt mr-2"></i>
+                                                        <strong>Chap {{ comp.last_chapter.chap|floatformat }} [EN]</strong>
+                                                    </a></p>
+                                                {% endif %}
+                                                <div class="mpd-buttons">
+                                                    <a href="{% url "read-book-first" comp.slug %}"
+                                                        class="btn btn-warning text-dark btn-sm btn-block"><i
+                                                            class="fas fa-glasses mr-2"></i>Read Now</a>
+                                                    <a href="{% url "book-detail" comp.slug %}" class="btn btn-light btn-sm btn-block"><i
+                                                            class="fas fa-info-circle mr-2"></i>Info</a>
+                                                </div>
+                                            </div>
+                                            <img src="{{ comp.cover_photo.url }}"
+                                                class="manga-poster-img lazyload" alt="{{ comp.name }}">
+                                        </div>
+            
+                                        <div class="manga-detail">
+                                            <h3 class="manga-name"><a href="{% url "book-detail" comp.slug %}"
+                                                    title="{{ comp.name }}">{{ comp.name }}</a>
+                                            </h3>
+                                            <div class="fd-infor">
+                                                {% for genre in comp.genres.all|slice:":2" %}
+                                                {% if forloop.last %}
+                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                {% else %}
+                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                {% endif %}
+                                                {% endfor %}
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+            
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="clearfix"></div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                        </div>
+                        <div class="featured-navi">
+                            <div class="navi-next" tabindex="0" role="button" aria-label="Next slide" aria-disabled="false"><i
+                                    class="fas fa-angle-right"></i></div>
+                            <div class="navi-prev swiper-button-disabled" tabindex="-1" role="button" aria-label="Previous slide"
+                                aria-disabled="true"><i class="fas fa-angle-left"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+{% include "includes/footer.html" %}
+
+<script>
+    const slider_swiper = new Swiper('#slider', {
+        loop: true,
+        effect: "fade",
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: "#slider .swiper-navigation .swiper-button-next",
+            prevEl: "#slider .swiper-navigation .swiper-button-prev",
+        },
+    });
+
+    const trending_swiper = new Swiper('#trending-home .swiper-container', {
+        slidesPerView: 6,
+        spaceBetween: 20,
+        grabCursor: true,
+        navigation: {
+            nextEl: "#trending-home .trending-navi .navi-next",
+            prevEl: "#trending-home .trending-navi .navi-prev",
+        },
+        breakpoints: {
+            300: {
+                slidesPerView: 3,
+                spaceBetween: 2,
+            },
+            641: {
+                slidesPerView: 4,
+                spaceBetween: 5,
+            },
+            830: {
+                slidesPerView: 5,
+                spaceBetween: 15,
+            },
+            1100: {
+                slidesPerView: 6,
+                spaceBetween: 15,
+            },
+        },
+    });
+
+    const featured_03_swiper = new Swiper('#featured-03 .swiper-container', {
+        slidesPerView: 8,
+        spaceBetween: 15,
+        grabCursor: true,
+        navigation: {
+            nextEl: "#featured-03 .featured-navi .navi-next",
+            prevEl: "#featured-03 .featured-navi .navi-prev",
+        },
+        breakpoints: {
+            300: {
+                slidesPerView: 3,
+                spaceBetween: 2,
+            },
+            641: {
+                slidesPerView: 4,
+                spaceBetween: 5,
+            },
+            830: {
+                slidesPerView: 5,
+                spaceBetween: 15,
+            },
+            1100: {
+                slidesPerView: 6,
+                spaceBetween: 15,
+            },
+            1400: {
+                slidesPerView: 8,
+                spaceBetween: 15,
+            },
+        },
+    });
+
+    const featured_04_swiper = new Swiper('#featured-04 .swiper-container', {
+        slidesPerView: 8,
+        spaceBetween: 15,
+        grabCursor: true,
+        navigation: {
+            nextEl: "#featured-04 .featured-navi .navi-next",
+            prevEl: "#featured-04 .featured-navi .navi-prev",
+        },
+        breakpoints: {
+            300: {
+                slidesPerView: 3,
+                spaceBetween: 2,
+            },
+            641: {
+                slidesPerView: 4,
+                spaceBetween: 5,
+            },
+            830: {
+                slidesPerView: 5,
+                spaceBetween: 15,
+            },
+            1100: {
+                slidesPerView: 6,
+                spaceBetween: 15,
+            },
+            1400: {
+                slidesPerView: 8,
+                spaceBetween: 15,
+            },
+        },
+    });
+
+    var isAuthenticated = {{ user.is_authenticated|lower }};
+    if(isAuthenticated){
+        $.ajax({
+            url: '/ajax/continue-reading/home',
+            type: 'GET',
+            success: function(response){
+                if(response.status == true){
+                    $('#manga-continue').html(response.html);
+                }
+            }
+        })
+    }
+
+    // Ajax remove continue reading
+    $(document).on('click', '.btn-remove-cr', function(e){
+        var id = $(this).attr('data-id');
+        var $loading = $(`#cr-loading-${id}`);
+        $loading.show()
+
+        if(isAuthenticated){
+            setTimeout(() => {
+                $.ajax({
+                    url: '/ajax/continue-reading/remove',
+                    type: 'POST',
+                    data: {id},
+                    success: function(response){
+                        var message = response.message;
+                        if(response.status == true){
+                            $.ajax({
+                                url: '/ajax/continue-reading/home',
+                                type: 'GET',
+                                success: function(response){
+                                    if(response.status == true){
+                                        toastr.success(message);
+                                        $('#manga-continue').html(response.html);
+                                    }else{
+                                        toastr.success(message);
+                                    }
+                                    $loading.hide();
+                                }
+                            });
+                        }else{
+                            toastr.error(message);
+                        }
+                    }
+                });
+            }, 500);
+        }
+    });
+</script>
+{% endblock content %}

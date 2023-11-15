@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    {{ book.name }} Online
+{% endblock title %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div class="clearfix"></div>
+<div id="ani_detail">
+    <div class="ani_detail-stage">
+        <div class="container">
+            <div class="detail-breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url "home" %}">Home</a></li>
+                        <li class="breadcrumb-item active">{{ book.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="anis-content">
+                <div class="anisc-poster">
+                    <div class="manga-poster">
+                        <img src="{{ book.cover_photo.url }}"
+                            class="manga-poster-img" alt="{{ book.name }}">
+                    </div>
+                </div>
+                <div class="anisc-detail">
+                    <h2 class="manga-name">{{ book.name }}</h2>
+                    <div class="manga-name-or">{{ book.origin_name }}</div>
+                    <div id="mal-sync"></div>
+                    <div class="manga-buttons">
+                        <a href="{% url "read-book-first" book.slug %}" class="btn btn-warning btn-play smoothlink">
+                            <i class="fas fa-eye mr-2"></i>Read Now</a>
+                        <div class="dr-fav" id="reading-list-info">
+                            {% if user.is_authenticated and user|check_readinglist:book %}
+                                {% with user_reading=user|get_readinglist:book %}
+                                    {% include "includes/reading-list-info.html" with action_type=user_reading.reading_list.id page="detail" %}
+                                {% endwith %}
+                            {% else %}
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    class="btn btn-light btn-fav "><i class="far fa-bookmark"></i></a>
+                                <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                                    {% for rl in reading_list %}
+                                        <a class="rl-item dropdown-item" data-type="{{rl.id}}" data-book-id="{{book.id}}" data-page="detail" 
+                                            href="javascript:;">{{ rl.name }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                                <div class="clearfix"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="sort-desc">
+                        <div class="genres">
+                            {% for genre in book.genres.all %}
+                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="description">
+                            {{ book.description }}
+                        </div>
+
+                        <div class="description-more">
+                            <button type="button" data-toggle="modal" data-target="#modaldesc"
+                                class="btn btn-xs text-white" style="background: transparent; font-weight: bold;">+ Read full
+                            </button>
+                        </div>
+
+                        <div class="anisc-info-wrap">
+                            <div class="anisc-info">
+                                <div class="item item-title">
+                                    <span class="item-head">Type:</span>
+                                    <a class="name" href="{% url "type" book.type.slug %}">{{ book.type.name }}</a>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Demographic:</span>
+                                    <span class="name">{{ book.demographic }}</span>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Status:</span>
+                                    <span class="name">{{ book.status }}</span>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Author:</span>
+                                    <span class="name">{{ book.author }}</span>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Artist:</span>
+                                    <span class="name">{{ book.artist }}</span>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Published:</span>
+                                    <span class="name">{{ book.published }}</span>
+                                </div>
+                                <div class="item item-title">
+                                    <span class="item-head">Views:</span>
+                                    <span class="name">718,990</span>
+                                </div>
+                                <div class="detail-toggle">
+                                    <button type="button" class="btn btn-sm btn-light"><i
+                                            class="fas fa-angle-down mr-2"></i></button>
+                                </div>
+                                <div class="dt-rate" id="vote-info">
+                                    <div class="block-rating {% if user.is_authenticated and user|check_vote:book %}rated{% endif %}">
+                                        <div class="rating-result">
+                                            <div class="rr-mark float-left">
+                                                <strong>
+                                                    <i class="fas fa-star text-warning mr-2"></i>{{ book.vote_star }}
+                                                </strong>
+                                                <small>({{ book.vote_count }} voted)</small>
+                                            </div>
+                                            <div class="rr-title float-right">Vote now</div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="description">What do you think about this {{ book.type.name }}?</div>
+                                        <div class="button-rate">
+                                            <button type="button" class="btn btn-emo rate-bad btn-vote {% if user.is_authenticated and user|get_vote:book == 1 %}emo-rated{% endif %}" data-mark="1" 
+                                                data-id="{{ book.pk }}">😩<span class="ml-2">Boring</span>
+                                            </button>
+                                            <button type="button" class="btn btn-emo rate-normal btn-vote {% if user.is_authenticated and user|get_vote:book == 5 %}emo-rated{% endif %}" data-mark="5" 
+                                                data-id="{{ book.pk }}">😃<span class="ml-2">Great</span>
+                                            </button>
+                                            <button type="button" class="btn btn-emo rate-good btn-vote {% if user.is_authenticated and user|get_vote:book == 10 %}emo-rated{% endif %}" data-mark="10"
+                                                data-id="{{ book.pk }}">🤩<span class="ml-2">Amazing</span>
+                                            </button>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="social-in-box">
+                        <div class="sharethis-inline-share-buttons st-center st-has-labels st-inline-share-buttons st-animated text-left" id="st-1">
+                            <div class="st-btn st-first" data-network="telegram" style="display: inline-block;">
+                                <img alt="telegram sharing button" src="{% static "imgs/telegram.svg" %}">
+                                <span class="st-label">Share</span>
+                            </div>
+                            <div class="st-btn" data-network="twitter" style="display: inline-block;">
+                                <img alt="twitter sharing button" src="{% static "imgs/twitter.svg" %}">
+                                <span class="st-label">Tweet</span>
+                            </div>
+                            <div class="st-btn" data-network="facebook" style="display: inline-block;">
+                                <img alt="facebook sharing button" src="{% static "imgs/facebook.svg" %}">
+                                <span class="st-label">Share</span>
+                            </div>
+                            <div class="st-btn" data-network="reddit" style="display: inline-block;">
+                                <img alt="reddit sharing button" src="{% static "imgs/reddit.svg" %}">
+                                <span class="st-label">Share</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="main-wrapper" class="page-layout page-detail">
+    <div class="container">
+        <div id="mw-2col">
+            <div id="main-content">
+                {% if book.chapters.all %}
+                    <section id="chapters-list" class="block_area block_area_category block_area_chapters">
+                        <div class="block_area-header mb-0">
+                            <div class="bah-heading bah-heading-tabs">
+                                <ul class="nav nav-tabs chap-tabs">
+                                        <li class="nav-item"><a data-toggle="tab" href="#list-chapter" class="nav-link active show">List Chapter</a></li>
+                                </ul>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="tab-content">
+                            <div id="list-chapter" class="tab-pane active show">
+                                <div class="chapter-section">
+                                    <div class="chapter-s-lang">
+                                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm"><i class="far fa-file-alt mr-2"></i><span id="c-selected-lang"><span>Language: </span>EN<i class="fas fa-angle-down ml-2"></i></span></button>
+                                        <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(10px, 42px, 0px);">                                          
+                                                <a class="dropdown-item c-select-lang lang-item active" href="javascript:;" data-type="chap" data-code="en">
+                                                    [EN] English ({{book.chapters.all|length}} chapters)</a>
+                                        </div>
+                                    </div>
+                                    <div class="chapter-s-search">
+                                        <form class="preform search-reading-item-form">
+                                            <div class="css-icon"><i class="fas fa-search"></i></div>
+                                            <input class="form-control search-reading-item" type="text" placeholder="Number of Chapter" autofocus="">
+                                        </form>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="chapters-list-ul">
+                                    
+                                    <ul class="ulclear reading-list lang-chapters active" id="en-chapters" style="">
+                                        {% for chapter in book.chapters.all reversed %}
+                                            <li class="item reading-item chapter-item" data-number="{{ chapter.chap|floatformat }}">
+                                                <a href="{% url "read-book" chapter.book.slug chapter.chap|floatformat %}" class="item-link" title="Chap {{ chapter.chap|floatformat }}: {{ chapter.tit }}">
+                                                    <span class="arrow mr-2"><i class="far fa-file-alt"></i></span>
+                                                    <span class="name">Chap {{ chapter.chap|floatformat }}: {{ chapter.tit }}</span>
+                                                    <span class="item-read"><i class="fas fa-glasses mr-1"></i> Read</span>
+                                                </a>
+                                                <div class="clearfix"></div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </section>
+                {% else %}
+                    <h1 class="text-center mt-5">No Chapter Found</h1>
+                {% endif %}
+                <div class="clearfix"></div>
+            </div>
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-genres">
+                    <div class="block_area-header">
+                        <div class="bah-heading">
+                            <h2 class="cat-heading">Genres</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="category_block mb-0">
+                            <div class="c_b-wrap">
+                                <div class="c_b-list active">
+                                    <div class="cbl-row">
+                                        <div class="item item-focus focus-01"><a href="/latest-updated" title=""><i
+                                                    class="mr-1">⚡</i>
+                                                Latest Updated</a></div>
+                                        <div class="item item-focus focus-02"><a href="/new-release" title=""><i class="mr-1">✌</i>
+                                                New Release</a></div>
+                                        <div class="item item-focus focus-04"><a href="/most-viewed" title=""><i class="mr-1">🔥</i>
+                                                Most Viewed</a></div>
+                                        <div class="item item-focus focus-05"><a href="/completed" title=""><i class="mr-1">✅</i>
+                                                Completed</a></div>
+                                    </div>
+                                    <div class="cbl-row">
+                                        {% for genre in genres %}
+                                        <div class="item">
+                                            <a href="{% url "genre" genre.slug %}" title="{{ genre.name }}">{{ genre.name }}</a>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="item item-more"><a class="im-toggle">+ More</a></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="block_area block_area_sidebar block_area-realtime">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">You May Also Like</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="cbox cbox-list cbox-realtime">
+                            <div class="featured-block-ul">
+                                <ul class="ulclear">
+                                    {% for rl in realtime %}
+                                    <li class="item-top">
+                                        <a href="{% url "book-detail" rl.slug %}" class="manga-poster">
+                                            <img src="{{ rl.cover_photo.url }}"
+                                                class="manga-poster-img ls-is-cached lazyloaded"
+                                                alt="{{ rl.name }}">
+                                        </a>
+                                        <div class="manga-detail">
+                                            <h3 class="manga-name"><a href="{% url "book-detail" rl.slug %}"
+                                                    title="{{ rl.name }}">{{ rl.name }}</a>
+                                            </h3>
+                                            <div class="fd-infor">
+                                                <span class="fdi-item fdi-cate">
+                                                    {% for genre in rl.genres.all|slice:":2" %}
+                                                        {% if forloop.last %}
+                                                            <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                        {% else %}
+                                                            <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                                <div class="d-block">
+                                                    <span class="fdi-item fdi-chapter">
+                                                        <a href="{% url "read-book" rl.slug rl.last_chapter.chap|floatformat %}">
+                                                            <i class="far fa-file-alt mr-2"></i>Chap {{ rl.last_chapter.chap|floatformat }}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+{% include "includes/footer.html" %}
+{% include "includes/modal-desc.html" with book=book %}
+{% endblock content %}

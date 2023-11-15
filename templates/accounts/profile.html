@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div id="main-wrapper">
+    <div class="container">
+        <div id="mw-2col">
+            <div id="main-content">
+                <!--Begin: Section Manga list-->
+                <section class="block_area block_area_profile">
+                    <div class="block_area-header">
+                        <div class="bah-heading">
+                            <h2 class="cat-heading">Profile Manager</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <form class="preform preform-center" method="post" id="profile-form">
+                            {% csrf_token %}
+                            <div class="profile-avatar">
+                                <img data-toggle="modal" data-target="#modalavatars" id="preview-avatar" src="{{ user.profile.avatar.image.url }}" alt="{{ user.name }}" />
+                                <div data-toggle="modal" data-target="#modalavatars" class="pa-edit"> Change Avatar </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="pro5-email">Email address</label>
+                                {% comment %} {{ form.email|attr:"type:email"|attr:"id:pro5-email"|attr:"disabled:"|attr:"name:email"|add_class:"form-control" }} {% endcomment %}
+                                <input type="email" id="pro5-email" class="form-control" value="{{request.user.email}}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="pro5-name">Display name</label>
+                                {{ form.name|attr:"type:text"|attr:"id:pro5-name"|attr:"name:name"|add_class:"form-control" }}
+                            </div>
+                            <div class="block">
+                                <a class="btn btn-xs btn-blank" data-toggle="collapse" href="#show-changepass">
+                                    <i class="fas fa-key mr-2"></i>Change password </a>
+                            </div>
+                            <div id="show-changepass" class="collapse mt-3">
+                                <div class="form-group">
+                                    <label class="prelabel" for="pro5-currentpass">Current Password</label>
+                                    {{ form.current_password|attr:"type:password"|attr:"id:pro5-currentpass"|add_class:"form-control" }}
+                                </div>
+                                <div class="form-group">
+                                    <label class="prelabel" for="pro5-pass">New Password</label>
+                                    {{ form.new_password|attr:"type:password"|attr:"id:pro5-pass"|add_class:"form-control" }}
+                                </div>
+                                <div class="form-group">
+                                    <label class="prelabel" for="pro5-confirm">Confirm New Password</label>
+                                    {{ form.confirm_new_password|attr:"type:password"|attr:"id:pro5-confirm"|add_class:"form-control" }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="mt-4">&nbsp;</div>
+                                <button class="btn btn-block btn-warning">Save</button>
+                                <div class="loading-relative" id="profile-loading" style="display: none">
+                                    <div class="loading">
+                                        <div class="span1"></div>
+                                        <div class="span2"></div>
+                                        <div class="span3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <!--End: Section Manga list-->
+                <div class="clearfix"></div>
+            </div>
+            <!--Begin: main-sidebar-->
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-profile">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Profile Menu</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="menu-profiles">
+                            <ul class="ulclear">
+                                <li class="active">
+                                    <a href="{% url "profile" %}" class="mp-item">
+                                        <i class="fas fa-user mr-3"></i>Profile </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/continue-reading" class="mp-item">
+                                        <i class="fas fa-glasses mr-3"></i>Continue Reading </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url "reading-list" %}" class="mp-item">
+                                        <i class="fas fa-bookmark mr-3"></i>Reading List </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/notifications" class="mp-item">
+                                        <i class="fas fa-bell mr-3"></i>Notifications </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!--/End: main-sidebar-->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+{% include "includes/modal-avatar.html" %}
+<script>
+$('#profile-form').submit(function(e){
+    e.preventDefault();
+    $form = $(this).serialize();
+
+    $('#profile-loading').show();
+
+    $.ajax({
+        url: window.location.href,
+        type: 'POST',
+        data: $form,
+        dataType: 'json',
+        success: function(response){
+            if(response.status == true){
+                toastr.success(response.message);
+                $('.btn-xs[href="#show-changepass"]').trigger('click');
+                $('#show-changepass').find('input').val(''); 
+                $('#profile-loading').hide();
+            }else{
+                toastr.error(response.message);
+            }
+        }
+    })
+});
+
+$('.item.item-avatar').click(function(e){
+    var $this = $(this);
+    var id = $(this).attr('data-id');
+    
+    $.ajax({
+        url: '/ajax/user/profile',
+        type: 'POST',
+        data: {'avatar_id': id},
+        success: function(response){
+            if(response.status == true){
+                $('.item.item-avatar').removeClass('active');
+                $this.addClass('active');
+                $('#preview-avatar').attr('src', $('.item.item-avatar.active').find('img')[0].src);
+                toastr.success(response.message);
+            }else{
+                toastr.error(response.message);
+            }
+        }
+    })
+});
+
+
+</script>
+{% include "includes/footer.html" %}
+{% endblock content %}

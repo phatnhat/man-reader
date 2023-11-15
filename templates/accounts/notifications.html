@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div id="main-wrapper">
+    <div class="container">
+        <div id="mw-2col">
+            <div id="main-content">
+                <!--Begin: Section Manga list-->
+                <section class="block_area block_area_profile">
+                    <div class="block_area-header">
+                        <div class="bah-heading">
+                            <h2 class="cat-heading">Notifications</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="inbox-list">
+                            <div class="inbox-tabs">
+                                <div class="float-right">
+                                    <a data-position="page" class="btn btn-sm btn-blank notify-seen-all" style="font-size: 12px;">
+                                        <i class="fas fa-check mr-1"></i> Mark <span class="d-none d-sm-inline">all as</span> read </a>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="inbox-item-list">
+                                {% for noti in page_obj %}
+                                    <div class="inbox-item with-poster {% if not noti.mark %}new{% endif %}">
+                                        <a href="{% url "read-book" noti.chapter.book.slug noti.chapter.chap|floatformat %}?n_id={{noti.id}}" class="manga-poster">
+                                            <img src="{{ noti.chapter.book.cover_photo.url }}" class="manga-poster-img">
+                                        </a>
+                                        <div class="small ii-time mb-1">{{ noti.created_at|timesince }} ago</div>
+                                        <div class="ii-title">
+                                            <span class="highlight-text">{{ noti.chapter.book.name }}</span> - Chapter {{ noti.chapter.chap|floatformat }} [EN] Available NOW!
+                                        </div>
+                                        <div class="ii-content">
+                                            <a href="{% url "read-book" noti.chapter.book.slug noti.chapter.chap|floatformat %}?n_id={{noti.id}}">Click here to read it now.</a>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="pre-pagination mt-4">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-lg justify-content-center">
+                                    {% if page_obj %}
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item"><a title="First" class="page-link" href="{% url "notifications" %}?page=1">«</a></li>
+                                            <li class="page-item"><a title="Previous" class="page-link" href="{% url "notifications" %}?page={{ page_obj.previous_page_number }}">‹</a></li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if num > page_obj.number|add:'-1'|add:'-2' and num < page_obj.number|add:'-1'|add:4 %}
+                                                {% if num == page_obj.number %}
+                                                    <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                                {% else %}
+                                                    <li class="page-item"><a title="Page 2" class="page-link" href="{% url "notifications" %}?page={{num}}">{{ num }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item"><a title="Next" class="page-link" href="{% url "notifications" %}?page={{ page_obj.next_page_number }}">›</a></li>
+                                            <li class="page-item"><a title="Last" class="page-link" href="{% url "notifications" %}?page={{ page_obj.paginator.num_pages }}">»</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </section>
+                <!--End: Section Manga list-->
+                <div class="clearfix"></div>
+            </div>
+            <!--Begin: main-sidebar-->
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-profile">
+                    <div class="block_area-header">
+                        <div class="float-left bah-heading">
+                            <h2 class="cat-heading">Profile Menu</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="menu-profiles">
+                            <ul class="ulclear">
+                                <li class="">
+                                    <a href="/user/profile" class="mp-item">
+                                        <i class="fas fa-user mr-3"></i>Profile </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/continue-reading" class="mp-item">
+                                        <i class="fas fa-glasses mr-3"></i>Continue Reading </a>
+                                </li>
+                                <li class="">
+                                    <a href="/user/reading-list" class="mp-item">
+                                        <i class="fas fa-bookmark mr-3"></i>Reading List </a>
+                                </li>
+                                <li class="active">
+                                    <a href="/user/notifications" class="mp-item">
+                                        <i class="fas fa-bell mr-3"></i>Notifications </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!--/End: main-sidebar-->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.notify-seen-all').click(function(e){
+        $.ajax({
+            url: '/ajax/notification/seen-all',
+            type: 'POST',
+            success: function(response){
+                if(response.status == true){
+                    toastr.success(response.message);
+                    $('.inbox-item.with-poster').removeClass('new');
+                }else{
+                    toastr.error(response.message);
+                }
+            }
+        })
+    });
+</script>
+{% include "includes/footer.html" %}
+{% endblock content %}

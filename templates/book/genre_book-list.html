@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Read {{ genre|title }} Online
+{% endblock title %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div class="clearfix"></div>
+<div class="prebreadcrumb">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:;">Genre</a></li>
+                <li class="breadcrumb-item active">{{ genre|title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div id="main-wrapper" class="page-layout page-category">
+    <div class="container">
+        <div class="mw-2col">
+            
+            <div id="main-content">
+                <!--Begin: Section Manga list-->
+                <section class="block_area block_area_category">
+                    <div class="block_area-header">
+                        <div class="bah-heading float-left">
+                            <h2 class="cat-heading">{{ genre|title }}</h2>
+                        </div>
+                        <div class="cate-sort float-right">
+                            <div class="cs-item">
+                                <button genre="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    class="btn btn-sm btn-sort">
+                                    <span class="mr-2">Sort:</span>
+                                    {{ sort_name }}
+                                    <i class="fas fa-angle-down ml-2"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                                    {% for sl in sort_list %}
+                                        <a class="dropdown-item {% if sort == sl.slug %}added{% endif %}" href="/genre/{{genre}}?sort={{ sl.slug }}"> {{ sl.name }} {% if sort == sl.slug %}<i class="fas fa-check ml-2"></i>{% endif %}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="manga_list-sbs">
+                        <div class="mls-wrap">
+                            {% for book in page_obj %}
+                            <div class="item item-spc">
+                                <a class="manga-poster" href="{% url "book-detail" book.slug %}">
+                                    <span class="tick tick-item tick-lang">EN</span>
+                                    <img src="{{ book.cover_photo.url }}"
+                                        class="manga-poster-img lazyload" alt="{{ book.name }}">
+                                </a>
+                                <div class="manga-detail">
+                                    <h3 class="manga-name">
+                                        <a href="{% url "book-detail" book.slug %}" title="{{ book.name }}">{{ book.name }}</a>
+                                    </h3>
+                                    <div class="fd-infor">
+                                        <span class="fdi-item fdi-cate">
+                                            {% for genre in book.genres.all|slice:":2" %}
+                                                {% if forloop.last %}
+                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                {% else %}
+                                                    <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                        <div class="clearfix"></div>
+                                    </div>
+
+                                    <div class="tab-content">
+                                        <div id="spc-chap-16" class="tab-pane active show">
+                                            <div class="fd-list">
+                                                {% for chapter in book.list_chapters|slice:":3" %}
+                                                    <div class="fdl-item">
+                                                        <div class="chapter">
+                                                            <a href="{% url "read-book" book.slug chapter.chap|floatformat %}">
+                                                                <i class="fas fa-book mr-2"></i>Chap {{ chapter.chap|floatformat }} [EN]
+                                                            </a>
+                                                        </div>
+                                                        <div class="release-time"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            {% endfor %}
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="pre-pagination mt-4">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-lg justify-content-center">
+                                    {% if page_obj %}
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item"><a title="First" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page=1">«</a></li>
+                                            <li class="page-item"><a title="Previous" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{ page_obj.previous_page_number }}">‹</a></li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if num > page_obj.number|add:'-1'|add:'-2' and num < page_obj.number|add:'-1'|add:4 %}
+                                                {% if num == page_obj.number %}
+                                                    <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                                {% else %}
+                                                    <li class="page-item"><a title="Page 2" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{num}}">{{ num }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item"><a title="Next" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{ page_obj.next_page_number }}">›</a></li>
+                                            <li class="page-item"><a title="Last" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{ page_obj.paginator.num_pages }}">»</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </section>
+                <div class="clearfix"></div>
+            </div>
+            
+            <div id="main-sidebar">
+                <section class="block_area block_area_sidebar block_area-genres">
+                    <div class="block_area-header">
+                        <div class="bah-heading">
+                            <h2 class="cat-heading">Genres</h2>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="block_area-content">
+                        <div class="category_block mb-0">
+                            <div class="c_b-wrap">
+                                <div class="c_b-list active">
+                                    <div class="cbl-row">
+                                        <div class="item item-focus focus-01"><a href="/latest-updated" title=""><i
+                                                    class="mr-1">⚡</i>
+                                                Latest Updated</a></div>
+                                        <div class="item item-focus focus-02"><a href="/new-release" title=""><i class="mr-1">✌</i>
+                                                New Release</a></div>
+                                        <div class="item item-focus focus-04"><a href="/most-viewed" title=""><i class="mr-1">🔥</i>
+                                                Most Viewed</a></div>
+                                        <div class="item item-focus focus-05"><a href="/completed" title=""><i class="mr-1">✅</i>
+                                                Completed</a></div>
+                                    </div>
+                                    <div class="cbl-row">
+                                        {% for genre in genres %}
+                                        <div class="item">
+                                            <a href="{% url "genre" genre.slug %}" title="{{ genre.name }}">{{ genre.name }}</a>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="item item-more"><a class="im-toggle">+ More</a></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+{% include "includes/footer.html" %}
+{% endblock content %}

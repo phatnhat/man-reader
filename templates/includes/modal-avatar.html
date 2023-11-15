@@ -1,0 +1,35 @@
+<div class="modal fade premodal premodal-avatars" id="modalavatars" tabindex="-1" role="dialog" aria-labelledby="modalcharacterstitle" style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose Avatar</h5>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs pre-tabs pre-tabs-min pre-tabs-hashtag" style="margin-top: -5px">
+                    {% for hashtag in hashtags %}
+                        <li class="nav-item">
+                            <a data-toggle="tab" href="#hashtag-{{ hashtag.id }}" class="nav-link {% if user.profile.avatar.hashtag == hashtag %}active show{% endif %}">{{ hashtag.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for hashtag in hashtags %}
+                        <div id="hashtag-{{ hashtag.id }}" class="tab-pane fade {% if user.profile.avatar.hashtag == hashtag %}active show{% endif %}">
+                            <div class="avatar-list">
+                                {% for avatar in hashtag.images.all %}
+                                    <div class="item item-avatar {% if user.profile.avatar == avatar %}active{% endif %}" data-id="{{ avatar.id }}">
+                                        <div class="profile-avatar">
+                                            <img src="{{ avatar.image.url }}" alt="Avatar {{ avatar.id }}" />
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="clearfix"></div>
+                            <a data-dismiss="modal" aria-label="Close" class="btn btn-block btn-secondary mt-4">Close</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

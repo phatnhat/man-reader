@@ -1,0 +1,161 @@
+<div class="container">
+    <section class="block_area block_area_continue">
+        <div class="block_area-header block_area-header-tabs">
+            <div class="float-left bah-heading">
+                <h2 class="cat-heading">Continue Reading</h2>
+            </div>
+            <div class="bah-tab">
+                <ul class="nav nav-tabs pre-tabs pre-tabs-min">
+                    <li class="nav-item">
+                        <a data-toggle="tab" href="#cl-chap" class="nav-link cr-tab active">Chapter</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="block_area-content">
+            <div class="tab-content">
+                <div id="cl-chap" class="tab-pane show active">
+                    <div class="continue-list">
+                        <div class="swiper-container swiper-container-initialized swiper-container-horizontal">
+                            <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
+                                {% for cr in continue_reading_list %}
+                                    <div class="swiper-slide" style="width: 328.75px; margin-right: 15px;">
+                                        <div class="ctn-item">
+                                            <div class="ctn-detail">
+                                                <div class="manga-poster">
+                                                    <a class="link-mask" href="{% url "read-book" cr.book.slug cr.chapter.chap|floatformat %}"></a>
+                                                    <img src="{{cr.book.cover_photo.url}}" class="manga-poster-img lazyload" alt="{{cr.book.name}}">
+                                                </div>
+                                                <div class="manga-detail">
+                                                    <div class="dr-remove">
+                                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm btn-remove">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-model dmm-topright" aria-labelledby="ssc-list">
+                                                            <a href="javascript:;" data-id="{{cr.id}}" class="dropdown-item text-danger btn-remove-cr">Remove</a>
+                                                        </div>
+                                                    </div>
+                                                    <h3 class="manga-name">
+                                                        <a href="{% url "read-book" cr.book.slug cr.chapter.chap|floatformat %}" title="{{cr.book.name}}">{{cr.book.name}}</a>
+                                                    </h3>
+                                                    <div class="fd-infor">
+                                                        {% for genre in cr.book.genres.all|slice:":2" %}
+                                                            {% if forloop.last %}
+                                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                            {% else %}
+                                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                    <a href="{% url "read-book" cr.book.slug cr.chapter.chap|floatformat %}" class="reading-load">
+                                                        <div class="rl-loaded" style="width: 100%;"></div>
+                                                        <div class="rl-text">
+                                                            <span></span>Chap {{cr.chapter.chap|floatformat}} [EN]
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="loading-absolute bg-white" id="cr-loading-{{cr.id}}" style="display: none">
+                                                <div class="loading">
+                                                    <div class="span1"></div>
+                                                    <div class="span2"></div>
+                                                    <div class="span3"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="clearfix"></div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                        </div>
+                        <div class="featured-navi">
+                            <div class="navi-next" tabindex="0" role="button" aria-label="Next slide" aria-disabled="false">
+                                <i class="fas fa-angle-right"></i>
+                            </div>
+                            <div class="navi-prev swiper-button-disabled" tabindex="-1" role="button" aria-label="Previous slide" aria-disabled="true">
+                                <i class="fas fa-angle-left"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    var swCrChap = null,
+        swCrVol = null;
+    if ($('#cl-chap').length > 0) {
+        swCrChap = new Swiper('#cl-chap .swiper-container', {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            navigation: {
+                nextEl: '#cl-chap .featured-navi .navi-next',
+                prevEl: '#cl-chap .featured-navi .navi-prev',
+            },
+            breakpoints: {
+                300: {
+                    slidesPerView: 2,
+                    spaceBetween: 2,
+                },
+                560: {
+                    slidesPerView: 3,
+                    spaceBetween: 2,
+                },
+                641: {
+                    slidesPerView: 2,
+                    spaceBetween: 5,
+                },
+                940: {
+                    slidesPerView: 3,
+                    spaceBetween: 15,
+                },
+                1290: {
+                    slidesPerView: 4,
+                    spaceBetween: 15,
+                },
+            },
+            autoplay: false,
+        });
+    }
+    if ($('#cl-vol').length > 0) {
+        swCrVol = new Swiper('#cl-vol .swiper-container', {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            navigation: {
+                nextEl: '#cl-vol .featured-navi .navi-next',
+                prevEl: '#cl-vol .featured-navi .navi-prev',
+            },
+            breakpoints: {
+                300: {
+                    slidesPerView: 2,
+                    spaceBetween: 2,
+                },
+                560: {
+                    slidesPerView: 3,
+                    spaceBetween: 2,
+                },
+                641: {
+                    slidesPerView: 2,
+                    spaceBetween: 5,
+                },
+                940: {
+                    slidesPerView: 3,
+                    spaceBetween: 15,
+                },
+                1290: {
+                    slidesPerView: 4,
+                    spaceBetween: 15,
+                },
+            },
+            autoplay: false,
+        });
+    }
+    $(document).on('shown.bs.tab', '.cr-tab', function() {
+        swCrChap && swCrChap.update();
+        swCrVol && swCrVol.update();
+    });
+</script>

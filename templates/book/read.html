@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% load disqus_tags %}
+
+{% block title %}
+    Read {{ book.name }} Online
+{% endblock title %}
+
+{% block header_parent %}
+{% endblock %}
+
+{% block content %}
+<!--Begin: Header-->
+<div id="header" class="header-reader">
+    <div class="container">
+        <div class="auto-div">
+            <a href="/" id="logo" class="mr-0">
+                <img src="{% static "imgs/logo.png" %}" alt="logo">
+                <div class="clearfix"></div>
+            </a>
+            <div class="hr-line"></div>
+            <a href="/tokyo-ghoul-108" class="hr-manga">
+                <h2 class="manga-name">{{ book.name }}</h2>
+            </a>
+            <div class="hr-navigation">
+                <div class="rt-item rt-read">
+                    <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="btn">
+                        <div class="d-block">You are reading</div>
+                        <span class="name" id="reading-by">By
+                            Chapter</span><span class="m-show">Reading</span><i class="fas fa-angle-down ml-2"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                        <a class="dropdown-item select-reading-by active" data-value="chap"
+                            href="javascript:void(0)">By
+                            Chapter</a>
+                    </div>
+                </div>
+                <div id="reading-list" style="display: initial">
+                    <div class="rt-item rt-lang">
+                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            class="btn" id="c-selected-lang"><span>Language: </span>EN<i
+                                class="fas fa-angle-down ml-2"></i></button>
+                        <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                            <a data-code="en" data-type="chap" class="dropdown-item lang-item c-select-lang active"
+                                href="javascript:;">[EN] English</a>
+                        </div>
+                    </div>
+
+                    <div class="rt-item rt-chap" id="dropdown-chapters">
+                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn">
+                            <span id="current-chapter">Chapter {{ chapter.chap|floatformat }}</span>
+                            <i class="fas fa-angle-down ml-2"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-model dropdown-menu-fixed"
+                            aria-labelledby="ssc-list">
+                            <div class="chapter-list-read">
+                                <div class="chapter-section">
+                                    <div class="chapter-s-search">
+                                        <form class="preform search-reading-item-form">
+                                            <div class="css-icon"><i class="fas fa-search"></i></div>
+                                            <input class="form-control search-reading-item" type="text"
+                                                placeholder="Number of Chapter" autofocus="autofocus"
+                                                autocomplete="off">
+                                        </form>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="chapters-list-ul">
+                                    <ul class="ulclear reading-list lang-chapters active" id="en-chapters">
+                                        {% for chapt in book.list_chapters %}
+                                            <li class="item reading-item chapter-item {% if chapt.chap == chapter.chap %}active{% endif %}" data-id="{{chapt.pk}}" data-number="{{ chapt.chap|floatformat }}"
+                                                data-reading-mode="0">
+                                                <a href="{% url "read-book" chapt.book.slug chapt.chap|floatformat %}" title="Chap {{ chapt.chap|floatformat }}: {{ chapt.tit }}"
+                                                    class="item-link" data-shortname="Chapter {{ chapt.chap|floatformat }}">
+                                                    <span class="arrow mr-2"><i class="fas fa-caret-right"></i></span>
+                                                    <span class="name">Chap {{ chapt.chap|floatformat }}: {{ chapt.tit }}</span>
+                                                </a>
+                                                <div class="clearfix"></div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rt-item rt-navi">
+                    <a href="{% if prev_chapter %}{% url "read-book" prev_chapter.book.slug prev_chapter.chap|floatformat %}{% endif %}" type="button" class="btn btn-navi btn-navi-prev">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                    </a>
+                </div>
+                <div class="rt-item rt-navi right">
+                    <a href="{% if next_chapter %}{% url "read-book" next_chapter.book.slug next_chapter.chap|floatformat %}{% endif %}" type="button" class="btn btn-navi btn-navi-next">
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="float-right hr-right">
+                <div class="hr-comment mr-2">
+                    <a href="javascript:;" class="btn btn-sm hrr-btn">
+                        <i class="far fa-comment-alt"></i>
+                        <span class="number">
+                        </span>
+                        <span class="hrr-name">Comments</span>
+                    </a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="hr-setting mr-2">
+                    <a class="btn btn-sm hrr-btn"><i class="fas fa-cog"></i><span
+                            class="hrr-name">Settings</span></a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="hr-info mr-2">
+                    <a href="{% url "book-detail" book.slug %}" class="btn btn-sm hrr-btn"><i class="fas fa-info"></i><span
+                            class="hrr-name">Manga Detail</span></a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="hr-fav" id="reading-list-info">
+                    {% if user.is_authenticated and user|check_readinglist:book %}
+                        {% with user_reading=user|get_readinglist:book %}
+                            {% include "includes/reading-list-info.html" with action_type=user_reading.reading_list.id page="read" %}
+                        {% endwith %}
+                    {% else %}
+                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm hrr-btn">
+                            <i class="far fa-bookmark"></i><span class="hrr-name">Reading List</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                            {% for rl in reading_list %}
+                                <a class="rl-item dropdown-item" data-type="{{rl.id}}" data-book-id="{{book.id}}" data-page="read" 
+                                    href="javascript:;">{{ rl.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                        <div class="clearfix"></div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="ad-toggle"><i class="fas fa-expand-arrows-alt"></i></div>
+    </div>
+</div>
+<!--End: Header-->
+<div class="clearfix"></div>
+<div class="mr-tools mrt-top">
+    <div class="container">
+        <div class="read_tool">
+            <div class="float-left">
+                <div class="rt-item">
+                    <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="btn">Reading Mode: <span id="current-mode"></span> <i
+                            class="fas fa-angle-down ml-2"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                        <a class="dropdown-item mode-item" data-value="vertical"
+                            href="javascript:;">Vertical</a>
+                        <a class="dropdown-item mode-item" data-value="horizontal"
+                            href="javascript:;">Horizontal</a>
+                    </div>
+                </div>
+                <div class="rt-item">
+                    <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="btn">Reading Direction: <span id="current-direction"></span> <i
+                            class="fas fa-angle-down ml-2"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                        <a class="dropdown-item direction-item" data-value="rtl" href="javascript:;">RTL</a>
+                        <a class="dropdown-item direction-item" data-value="ltr" href="javascript:;">LTR</a>
+                    </div>
+                </div>
+                <div class="rt-item">
+                    <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="btn">Quality: <span id="current-quality"></span> <i
+                            class="fas fa-angle-down ml-2"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+                        <a class="dropdown-item quality-item" data-value="high">High</a>
+                        <a class="dropdown-item quality-item" data-value="medium">Medium</a>
+                        <a class="dropdown-item quality-item" data-value="low">Low</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="float-right">
+                <div class="rt-item" id="rt-close">
+                    <button type="button" class="btn"><i class="fas fa-times mr-2"></i>Close</button>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div id="images-content">
+
+</div>
+<div class="clearfix"></div>
+<div id="read-comment">
+    <div class="rc-close"><span aria-hidden="true">×</span></div>
+    <div class="comments-wrap">
+        <div class="sc-header">
+            <div class="sc-title text-center font-weight-bold" style="font-size: 20px; overflow: hidden; text-wrap: nowrap;">{{ book.name }}</div>
+            <div class="sc-h-sort">
+                <div class="dropdown-menu dropdown-menu-model dropdown-menu-normal" aria-labelledby="ssc-list">
+                    <a class="dropdown-item cm-sort" data-value="top" href="javascript:;">Top<i
+                            class="fas fa-check ml-2" style="display: none;"></i></a>
+                    <a class="dropdown-item cm-sort active" data-value="newest" href="javascript:;">Newest<i
+                            class="fas fa-check ml-2"></i></a>
+                    <a class="dropdown-item cm-sort" data-value="oldest" href="javascript:;">Oldest<i
+                            class="fas fa-check ml-2" style="display: none;"></i></a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="content-comments">
+            {% disqus_show_comments %}
+        </div>
+    </div>
+</div>
+
+
+<script>
+// show Settings
+$('.hr-setting').click(function(e){
+    $('.mrt-top .read_tool').toggleClass('active');
+});
+$('#rt-close').click(function(e){
+    $('.mrt-top .read_tool').removeClass('active');
+});
+
+$('.ad-toggle').click(function(e){
+    $('.page-reader').toggleClass('pr-full');
+});
+
+var isAuthenticated = {{ user.is_authenticated|lower }};
+
+// continue reading
+$(document).ready(function() {
+    var scrollTriggered = false;
+    var image_length = $('.image-vertical').length;
+    if (image_length < 1) return;
+
+    var pImage = Math.ceil(image_length * 0.10);
+    var imagePosition = $('.image-vertical').eq(pImage).offset().top;
+    $(window).on('scroll', function() {
+        if (!scrollTriggered && $(window).scrollTop() >= imagePosition) {
+            scrollTriggered = true;
+            if(isAuthenticated){
+                var chapter_id = {{chapter.id}};
+                var book_id = {{book.id}};
+                $.ajax({
+                    url: '/ajax/user/log-reading',
+                    type: 'POST',
+                    data: {
+                        book_id,
+                        chapter_id
+                    },
+                    success: function(response){
+                    }
+                })
+            }
+        }
+    });
+});
+
+
+
+mr_settings = JSON.parse(getCookie('mr_settings'));
+if(mr_settings == null){
+    setCookie('mr_settings',
+        JSON.stringify({'readingMode':null,'readingDirection':'rtl','quality':'medium','hozPageSize':1}), 365);
+
+    $('#images-content').append(`{% include "includes/first-read.html" %}`);
+    mr_settings = JSON.parse(getCookie('mr_settings'));
+}else{
+    if(mr_settings.readingMode == null) $('#images-content').append(`{% include "includes/first-read.html" %}`);
+    else{
+        mr_settings = JSON.parse(getCookie('mr_settings'));
+        if(mr_settings.readingMode == 'vertical') {
+            $('#images-content').append(`{% include "includes/ver-read.html" %}`);
+        }
+        else{
+            if(mr_settings.hozPageSize == 1)$('#images-content').append(`{% include "includes/hoz-read.html" %}`);
+            else $('#images-content').append(`{% include "includes/hoz2-read.html" %}`);
+        }
+
+        var mode_item = $(`.rt-item .dropdown-menu .dropdown-item.mode-item[data-value='${mr_settings.readingMode}']`);
+        var current_mode = $('#current-mode');
+        mode_item.addClass('active');
+        current_mode.text(mode_item.text());
+        if(mr_settings.readingMode == 'horizontal') $('body').addClass('page-reader');
+        else $('body').addClass('page-reader page-reader-ver');
+
+        var direction_item = $(`.rt-item .dropdown-menu .dropdown-item.direction-item[data-value='${mr_settings.readingDirection}']`);
+        var current_direction = $('#current-direction');
+        direction_item.addClass('active');
+        current_direction.text(direction_item.text());
+        $('#hoz-btn-next').toggleClass(mr_settings.readingDirection);
+        if(mr_settings.readingMode == 'horizontal'){
+            $(`.hoz-controls-${mr_settings.readingDirection}`).show();
+        }
+
+        var quality_item = $(`.rt-item .dropdown-menu .dropdown-item.quality-item[data-value='${mr_settings.quality}']`);
+        var current_quality = $('#current-quality');
+        quality_item.addClass('active');
+        current_quality.text(quality_item.text());
+        
+    }
+}
+
+
+// count view
+var timeoutId;
+var viewCounted = false;
+function countView() {
+if (!viewCounted) {
+    mr_viewed = JSON.parse(getCookie('mr_viewed_' + {{book.id}}));
+    if(mr_viewed == null){
+        csrftoken =  $('meta[name="csrf-token"]').attr('content'); 
+        $.ajax({
+            url: '{% url "count-view" book.id %}',
+            type: "POST",
+            success: function(response){
+                setCookie('mr_viewed_' + {{book.id}}, true, 1);
+                console.log(response);
+            }
+        });
+    }
+    viewCounted = true;
+    }
+}
+function startViewCount() {
+    timeoutId = setTimeout(countView, 10000);
+}
+function cancelViewCount() {
+    clearTimeout(timeoutId);
+}
+$(document).ready(function() {
+    startViewCount();
+    $(window).on('beforeunload', function() {
+        cancelViewCount();
+    });
+});
+
+
+$('.rt-item .dropdown-menu .dropdown-item.mode-item').click(function(e){
+    if(!$(this).hasClass('active')){
+        var value = $(this).text();
+        $('#current-mode').text(value);
+        $('.rt-item .dropdown-menu .dropdown-item.mode-item').removeClass('active');
+        $(this).addClass('active');
+        mr_settings.readingMode = $(this).attr('data-value');
+        setCookie('mr_settings', JSON.stringify(mr_settings), 365);
+        location.reload();
+    }
+});
+
+$('.rt-item .dropdown-menu .dropdown-item.direction-item').click(function(e){
+    if(!$(this).hasClass('active')){
+        var value = $(this).text();
+        $('#current-direction').text(value);
+        $('.rt-item .dropdown-menu .dropdown-item.direction-item').removeClass('active');
+        $(this).addClass('active');
+        mr_settings.readingDirection = $(this).attr('data-value');
+        setCookie('mr_settings', JSON.stringify(mr_settings), 365);
+        location.reload();
+    }
+});
+
+$('.rt-item .dropdown-menu .dropdown-item.quality-item').click(function(e){
+    if(!$(this).hasClass('active')){
+        var value = $(this).text();
+        $('#current-quality').text(value);
+        $('.rt-item .dropdown-menu .dropdown-item.quality-item').removeClass('active');
+        $(this).addClass('active');
+        mr_settings.quality = $(this).attr('data-value');
+        setCookie('mr_settings', JSON.stringify(mr_settings), 365);
+        location.reload();
+    }
+});
+
+$('.nabu-fill .nf-item').click(function(e){
+    if(!$(this).hasClass('active')){
+        mr_settings = JSON.parse(getCookie('mr_settings'));
+        if($(this).hasClass('nf-double'))
+            mr_settings.hozPageSize = 2;
+        else
+            mr_settings.hozPageSize = 1;
+        setCookie('mr_settings', JSON.stringify(mr_settings), 365);
+        location.reload();
+    }
+});
+
+$('.rtl-row.mode-item').click(function(e){
+    value = $(this).attr('data-value');
+    mr_settings = JSON.parse(getCookie('mr_settings'));
+    mr_settings.readingMode = value;
+    setCookie('mr_settings', JSON.stringify(mr_settings), 365);
+    location.reload();
+});
+
+var $ver_images = $('#vertical-content .iv-card.shuffled');
+if($ver_images){
+    $ver_images.each(function(i){
+        var url = $(this).attr('data-url');
+        var img_tag = document.createElement("img");
+        img_tag.className = "image-vertical";
+        img_tag.src = url;
+        img_tag.style.width = mr_settings.quality == 'low' ? '60%' : mr_settings.quality == 'medium' ? '80%' : '100%';
+        $(this).append(img_tag);
+    });
+}
+$('.image-vertical').on('load', function(e){
+    $(this).css('background', '#111111');
+}).on('error', function(e) {
+    $(this).hide();
+});
+
+
+var $hoz_images = $('.divslide-wrapper .ds-image').not(":last");
+if($hoz_images){
+    $hoz_images.each(function(i){
+        var url = $(this).attr('data-url');
+        var img_tag = document.createElement("img");
+        img_tag.className = "image-horizontal";
+        img_tag.src = url;
+        img_tag.style.width = '100%';
+        $(this).append(img_tag);
+    });
+}
+$('.image-horizontal').on('load', function(e){
+    $(this).css('background', '#111111');
+}).on('error', function(e) {
+    $(this).hide();
+});
+
+function hozNextImage(){
+    $items = $('.divslide-wrapper .ds-item');
+    $current_item = $('.divslide-wrapper .ds-item.active');
+    $next_item = $current_item.next('.ds-item');
+    $prev_item = $current_item.prev('.ds-item');
+
+    if($items.length - 1 == $items.index($next_item)){
+        $('.photo-button.hoz-next-hide').hide();
+        $('.hoz-next').addClass('disabled');
+        $('.hoz-prev').removeClass('disabled');
+    }
+
+    if($next_item.length != 0 && $items.length > $items.index($next_item)){
+        $current_item.removeClass('active');
+        $next_item.addClass('active');
+        $('.photo-button.hoz-prev-hide').show();
+        $('.hoz-prev').removeClass('disabled');
+
+        $image = $next_item.find('.ds-image');
+
+        if($next_item.hasClass('ds-sbs')){
+            $('.hoz-current-index').text(`${$image.eq(0).attr('data-page')} - ${$image.eq(1).attr('data-page')}`);
+        }else{
+            $('.hoz-current-index').text(`${$image.attr('data-page')}`);
+        }
+    }else{
+        $('.photo-button.hoz-next-hide').hide();
+    }
+}
+
+function hozPrevImage(){
+    $items = $('.divslide-wrapper .ds-item');
+    $current_item = $('.divslide-wrapper .ds-item.active');
+    $prev_item = $current_item.prev('.ds-item');
+    $next_item = $current_item.next('.ds-item');
+
+    if($items.index($prev_item) == 0){
+        $('.photo-button.hoz-prev-hide').hide();
+        $('.hoz-prev').addClass('disabled');
+        $('.hoz-next').removeClass('disabled');
+    }
+
+    if($prev_item.length != 0){
+        $current_item.removeClass('active');
+        $prev_item.addClass('active');
+        $('.photo-button.hoz-next-hide').show();
+        $('.hoz-next').removeClass('disabled');
+
+        $image = $prev_item.find('.ds-image');
+
+        if($prev_item.hasClass('ds-sbs')){
+            $('.hoz-current-index').text(`${$image.eq(0).attr('data-page')} - ${$image.eq(1).attr('data-page')}`);
+        }else{
+            $('.hoz-current-index').text(`${$image.attr('data-page')}`);
+        }
+    }else{
+        $('.photo-button.hoz-prev-hide').hide();
+    }
+}
+
+
+document.addEventListener('keydown', function (e) {
+    if(e.keyCode == 39){
+        if(mr_settings.readingDirection == 'rtl') hozPrevImage();
+        if(mr_settings.readingDirection == 'ltr') hozNextImage();
+    }else if(e.keyCode == 37){
+        if(mr_settings.readingDirection == 'rtl') hozNextImage();
+        if(mr_settings.readingDirection == 'ltr') hozPrevImage();
+    }
+});
+
+
+$('.hr-comment, .rc-close').click(function(e){
+    $('body').toggleClass('show-comment');
+});
+
+
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+</script>
+{% endblock content %}

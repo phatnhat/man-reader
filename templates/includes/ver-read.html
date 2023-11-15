@@ -1,0 +1,74 @@
+{% load custom_filters %}
+
+<div id="main-wrapper" class="page-layout page-read pb-0">
+    <div class="container">
+        <div class="container-reader-chapter" id="vertical-content">
+            {% for image in chapter_image %}
+                <div class="iv-card shuffled"
+                    data-url="{{ image.url }}">
+                    <div class="card-loading">
+                        <div class="c-l-area">
+                            <div class="paper-loading"></div>
+                            <p class="mb-0">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="mr-tools mrt-bottom">
+    <div class="container">
+        <div class="read_tool">
+            {% if prev_chapter %}
+                <div class="float-left" id="ver-prev-cv">
+                    <div class="rt-item">
+                        <a href="{% if prev_chapter %}{% url "read-book" prev_chapter.book.slug prev_chapter.chap|floatformat %}{% endif %}" type="button" class="btn btn-navi btn-navi-prev">
+                            <i class="fas fa-arrow-left mr-2"></i>Prev Chapter
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            {% endif %}
+            {% if next_chapter %}
+                <div class="float-right" id="ver-next-cv">
+                    <div class="rt-item">
+                        <a href="{% if next_chapter %}{% url "read-book" next_chapter.book.slug next_chapter.chap|floatformat %}{% endif %}" type="button" class="btn btn-navi btn-navi-next">
+                            Next Chapter<i class="fas fa-arrow-right ml-2"></i>   
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="dt-rate" id="vote-info">
+    <div class="block-rating {% if user.is_authenticated and user|check_vote:book %}rated{% endif %}">
+        <div class="rating-result">
+            <div class="rr-mark float-left">
+                <strong>
+                    <i class="fas fa-star text-warning mr-2"></i>{{ book.vote_star }}
+                </strong> 
+                <small>({{ book.vote_count }} voted)</small>
+            </div>
+            <div class="rr-title float-right">Vote now</div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="description">What do you think about this {{ book.type.name }}?</div>
+        <div class="button-rate">
+            <button type="button" class="btn btn-emo rate-bad btn-vote {% if user.is_authenticated and user|get_vote:book == 1 %}emo-rated{% endif %}" data-mark="1" data-id="{{ book.id }}">😩<span
+                    class="ml-2">Boring</span>
+            </button>
+            <button type="button" class="btn btn-emo rate-normal btn-vote {% if user.is_authenticated and user|get_vote:book == 5 %}emo-rated{% endif %}" data-mark="5" data-id="{{ book.id }}">😃<span
+                    class="ml-2">Great</span>
+            </button>
+            <button type="button" class="btn btn-emo rate-good btn-vote {% if user.is_authenticated and user|get_vote:book == 10 %}emo-rated{% endif %}" data-mark="10" data-id="{{ book.id }}">🤩<span
+                    class="ml-2">Amazing</span>
+            </button>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

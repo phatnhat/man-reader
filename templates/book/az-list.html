@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/header.html" %}
+<div class="prebreadcrumb">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">A-Z List</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div id="main-wrapper" class="page-layout page-category">
+    <div class="container">
+        <div id="mw-2col">
+        <!--Begin: main-content-->
+        <div id="main-content">
+            <!--Begin: Section Manga list-->
+        <section class="block_area block_area_category">
+            <div class="block_area-header">
+            <div class="bah-heading float-left">
+                <h2 class="cat-heading">A-Z List</h2>
+            </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="category_block">
+                <div class="c_b-wrap">
+                    <div class="c_b-list active alphabet-list">
+                        <div class="cbl-row">
+                            {% for alpha in alpha_list %}
+                                <div class="item {% if alpha.1 == alpha_selected %}active{% endif %}">
+                                    <a href="{% if alpha.1 %}{% url "az-list" alpha.1 %}{% else %}{% url "az-list" %}{% endif %}">{{ alpha.0 }}</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="manga_list-sbs">
+                <div class="mls-wrap">   
+                    {% for book in page_obj %}
+                        <div class="item item-spc">
+                            <a class="manga-poster" href="{% url "book-detail" book.slug %}">
+                                <span class="tick tick-item tick-lang">EN</span>
+                                <img src="{{ book.cover_photo.url }}"
+                                    class="manga-poster-img ls-is-cached lazyloaded" alt="{{ book.name }}">
+                            </a>
+                            <div class="manga-detail">
+                                <h3 class="manga-name">
+                                    <a href="{% url "book-detail" book.slug %}" title="{{ book.name }}">{{ book.name }}</a>
+                                </h3>
+                                <div class="fd-infor">
+                                    <span class="fdi-item fdi-cate">
+                                        {% for genre in book.genres.all|slice:":3" %}
+                                            {% if forloop.last %}
+                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                            {% else %}
+                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="tab-content">
+                                    <div id="spc-chap-4" class="tab-pane active show">
+                                        <div class="fd-list">
+                                            {% for chapter in book.list_chapters|slice:":3" %}
+                                                <div class="fdl-item">
+                                                    <div class="chapter">
+                                                        <a href="{% url "read-book" book.slug chapter.chap|floatformat %}">
+                                                            <i class="fas fa-book mr-2"></i>Chap {{ chapter.chap|floatformat }} [EN]
+                                                        </a>
+                                                    </div>
+                                                    <div class="release-time"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>     
+                                            {% endfor %}                                                               
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    {% endfor %}                 
+                    <div class="clearfix"></div>                       
+                    <div class="clearfix"></div>
+                </div>
+                <div class="pre-pagination mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-lg justify-content-center">
+                            {% if page_obj %}
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a title="First" class="page-link" href="{{ request.path }}?page=1">«</a></li>
+                                    <li class="page-item"><a title="Previous" class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">‹</a></li>
+                                {% endif %}
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if num > page_obj.number|add:'-1'|add:'-2' and num < page_obj.number|add:'-1'|add:4 %}
+                                        {% if num == page_obj.number %}
+                                            <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                        {% else %}
+                                            <li class="page-item"><a title="Page 2" class="page-link" href="{{ request.path }}?page={{num}}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a title="Next" class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">›</a></li>
+                                    <li class="page-item"><a title="Last" class="page-link" href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}">»</a></li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+        <!--End: Section Manga list-->
+        <div class="clearfix"></div>
+            </div>
+            <!--/End: main-content-->
+            <!--Begin: main-sidebar-->
+            <div id="main-sidebar">
+                
+                <section class="block_area block_area_sidebar block_area-realtime">
+                    <div class="block_area-header">
+                            <div class="float-left bah-heading">
+                                    <h2 class="cat-heading">Most Viewed</h2>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="block_area-content">
+                                <div class="cbox cbox-list cbox-realtime">
+                                    <div class="cbox-content">
+                                        <ul class="nav nav-pills nav-fill nav-tabs anw-tabs">
+                                                <li class="nav-item"><a data-toggle="tab" href="#chart-today" class="nav-link active show">Today</a></li>
+                                                <li class="nav-item"><a data-toggle="tab" href="#chart-week" class="nav-link">Week</a></li>
+                                                <li class="nav-item"><a data-toggle="tab" href="#chart-month" class="nav-link">Month</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div id="chart-today" class="tab-pane active show">
+                                                    <div class="featured-block-ul featured-block-chart">
+                                                            <ul class="ulclear">
+                                                            {% for chart in chart_today %}
+                                                                    <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                                            <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                                            <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                                                    <img src="{{ chart.cover_photo.url }}"
+                                                                                    class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                                            </a>
+                                                                            <div class="manga-detail">
+                                                                                    <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                                                    <div class="fd-infor">
+                                                                                    <span class="fdi-item">EN</span>
+                                                                                    <span class="dot"></span>
+                                                                                    <span class="fdi-item fdi-cate">
+                                                                                            {% for genre in chart.genres.all|slice:":2" %}
+                                                                                            {% if forloop.last %}
+                                                                                            <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                                            {% else %}
+                                                                                            <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                                            {% endif %}
+                                                                                            {% endfor %}
+                                                                                    </span>
+                                                                                    <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                                                    <div class="d-block">
+                                                                                        <span class="fdi-item fdi-chapter">
+                                                                                        {% if chart.list_chapters %}
+                                                                                                <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                                                <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                                                </a>
+                                                                                        {% endif %}
+                                                                                        </span>       
+                                                                                    </div>
+                                                                                    <div class="clearfix"></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        <div class="clearfix"></div>
+                                                                    </li>
+                                                            {% endfor %}
+                                                    </ul>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        <div id="chart-week" class="tab-pane">
+                                                <div class="featured-block-ul featured-block-chart">
+                                                <ul class="ulclear">
+                                                        {% for chart in chart_week %}
+                                                        <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                        <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                        <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                                <img src="{{ chart.cover_photo.url }}"
+                                                                class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                        </a>
+                                                        <div class="manga-detail">
+                                                                <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                                <div class="fd-infor">
+                                                                <span class="fdi-item">EN</span>
+                                                                <span class="dot"></span>
+                                                                <span class="fdi-item fdi-cate">
+                                                                        {% for genre in chart.genres.all|slice:":2" %}
+                                                                        {% if forloop.last %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                        {% else %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                        {% endif %}
+                                                                        {% endfor %}
+                                                                </span>
+                                                                <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                                <div class="d-block">
+                                                                        <span class="fdi-item fdi-chapter">
+                                                                        {% if chart.list_chapters %}
+                                                                                <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                                <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                                </a>
+                                                                        {% endif %}
+                                                                        </span>       
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                        </li>
+                                                        {% endfor %}
+                                                </ul>
+                                                <div class="clearfix"></div>
+                                                </div>
+                                        </div>
+                                        <div id="chart-month" class="tab-pane">
+                                                <div class="featured-block-ul featured-block-chart">
+                                                <ul class="ulclear">
+                                                        {% for chart in chart_month %}
+                                                        <li class="{% if forloop.counter <= 3 %} item-top {% endif %}">
+                                                        <div class="ranking-number"><span> {{ forloop.counter|stringformat:"02d" }} </span></div>
+                                                        <a href="{% url "book-detail" chart.slug %}" class="manga-poster">
+                                                                <img src="{{ chart.cover_photo.url }}"
+                                                                class="manga-poster-img ls-is-cached lazyloaded" alt="{{ chart.name }}">
+                                                        </a>
+                                                        <div class="manga-detail">
+                                                                <h3 class="manga-name"><a href="{% url "book-detail" chart.slug %}" title="{{ chart.name }}">{{ chart.name }}</a></h3>
+                                                                <div class="fd-infor">
+                                                                <span class="fdi-item">EN</span>
+                                                                <span class="dot"></span>
+                                                                <span class="fdi-item fdi-cate">
+                                                                        {% for genre in chart.genres.all|slice:":2" %}
+                                                                        {% if forloop.last %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                                        {% else %}
+                                                                        <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                                        {% endif %}
+                                                                        {% endfor %}
+                                                                </span>
+                                                                <span class="fdi-item fdi-view">{{chart.view_count}} views</span>
+                                                                <div class="d-block">
+                                                                        <span class="fdi-item fdi-chapter">
+                                                                        {% if chart.list_chapters %}
+                                                                                <a href="{% url "read-book" chart.slug chart.last_chapter.chap|floatformat %}">
+                                                                                <i class="far fa-file-alt mr-2"></i>Chap {{ chart.last_chapter.chap|floatformat }}
+                                                                                </a>
+                                                                        {% endif %}
+                                                                        </span>       
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                        </li>
+                                                        {% endfor %}
+                                                </ul>
+                                                <div class="clearfix"></div>
+                                                </div>
+                                        </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                </div>
+                                </div>
+                        </div>
+                </section>
+
+            </div>
+            <!--/End: main-sidebar-->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+{% include "includes/footer.html" %}
+{% endblock content %}

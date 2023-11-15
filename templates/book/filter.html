@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/header.html" %}
+
+<div id="main-wrapper" class="layout-page page-az page-filter">
+    <div class="container">
+        <div class="prebreadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                    <li class="breadcrumb-item active">Manga Filter</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="page-search-wrap">
+            <!--Begin: Section film list-->
+            <section class="block_area block_area_search">
+                <div id="filter-block">
+                    <form method="get">
+                        <div id="cate-filter" class="category_filter">
+                            <div class="category_filter-content mb-5">
+                                <div class="cfc-min-block">
+                                    <div class="ni-head mb-3"><strong>Filter</strong></div>
+                                    <div class="cmb-item cmb-type">
+                                        <div class="ni-head">Type</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="type">
+                                                    <option value="">All</option>
+                                                    {% for type in typies %}
+                                                        <option value="{{type.id}}" {% if type.id|stringformat:"i" == type_selected %}selected{% endif %}>{{type.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item cmb-status">
+                                        <div class="ni-head">Status</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="status">
+                                                    <option value="">All</option>
+                                                    {% for status in statues %}
+                                                        <option value="{{status.id}}" {% if status.id|stringformat:"i" == status_selected %}selected{% endif %}>{{status.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item cmb-demographic">
+                                        <div class="ni-head">Demographic</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="demographic">
+                                                    <option value="">All</option>
+                                                    {% for demographic in demographics %}
+                                                        <option value="{{demographic.id}}" {% if demographic.id|stringformat:"i" == demographic_selected %}selected{% endif %}>{{demographic.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item cmb-create_at" style="width: 180px">
+                                        <div class="ni-head">Create at</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="create_at">
+                                                    <option value="">All</option>
+                                                    <option value="3" {% if 3 == create_at_selected %}selected{% endif %}>3 days</option>
+                                                    <option value="7" {% if 7 == create_at_selected %}selected{% endif %}>7 days</option>
+                                                    <option value="30" {% if 30 == create_at_selected %}selected{% endif %}>30 days</option>
+                                                    <option value="90" {% if 90 == create_at_selected %}selected{% endif %}>3 months</option>
+                                                    <option value="180" {% if 180 == create_at_selected %}selected{% endif %}>6 months</option>
+                                                    <option value="365" {% if 365 == create_at_selected %}selected{% endif %}>1 year</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item cmb-min_chap" style="width: 220px">
+                                        <div class="ni-head">Minimum chapters</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select" style="width: 10px;">
+                                                <input type="number" value="{{min_chap_value}}" id="f-i-min_chap" name="min_chap" style="text-align: center; width: 50px; outline: none; border: none; border-bottom: 1px solid black;">
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="cfc-min-block cfc-min-block-date">
+                                    <div class="cmb-item cmb-date">
+                                        <div class="ni-head mr-2">Start Date</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="sy">
+                                                    <option value="">Year</option>
+                                                    {% for year in published_choices %}
+                                                        <option value="{{year.0}}" {% if sy == year.0 %}selected{% endif %}>{{year.1}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item cmb-date">
+                                        <div class="ni-head mr-2">End Date</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="ey">
+                                                    <option value="">Year</option>
+                                                    {% for year in published_choices %}
+                                                        <option value="{{year.0}}" {% if ey == year.0 %}selected{% endif %}>{{year.1}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>                                           
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="cmb-item">
+                                        <div class="ni-head">Sort</div>
+                                        <div class="nl-item">
+                                            <div class="nli-select">
+                                                <select class="custom-select" name="sort">
+                                                    <option value="default" {% if sort == "default" %}selected{% endif %}>Default</option>
+                                                    <option value="latest-updated" {% if sort == "latest-updated" %}selected{% endif %}>Latest Updated</option>
+                                                    <option value="rating" {% if sort == "rating" %}selected{% endif %}>Rating</option>
+                                                    <option value="name-az" {% if sort == "name-az" %}selected{% endif %}>Name A-Z</option>
+                                                    <option value="release-date" {% if sort == "release-date" %}selected{% endif %}>Release Date</option>
+                                                    <option value="most-viewed" {% if sort == "most-viewed" %}selected{% endif %}>Most Viewed</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="cfc-min-block cfc-min-block-genres mt-3">
+                                    <div class="ni-head mb-3"><strong>Genres</strong></div>
+                                    <div class="cmbg-wrap">
+                                        <input type="hidden" id="f-genre-ids" name="genres" value="{{genres_selected}}">
+                                        {% for genre in genres %}
+                                            <div data-id="{{genre.id}}" class="item f-genre-item">{{genre.name}}</div>
+                                        {% endfor %}
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="cfc-button mt-4">
+                                    <button class="btn btn-focus new-btn"><strong>Filter</strong></button>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="manga_list-sbs">
+                                <div class="block_area-header">
+                                    <div class="bah-heading">
+                                        <h2 class="cat-heading">Filter Results 
+                                            <span class="badge badge-secondary ml-1" style="font-size: 12px; vertical-align: middle;">0</span>
+                                        </h2>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="mls-wrap">   
+                                    {% for book in page_obj %}
+                                        <div class="item item-spc">
+                                            <a class="manga-poster" href="{% url "book-detail" book.slug %}">
+                                                <span class="tick tick-item tick-lang">EN</span>
+                                                <img src="{{ book.cover_photo.url }}"
+                                                    class="manga-poster-img ls-is-cached lazyloaded" alt="{{ book.name }}">
+                                            </a>
+                                            <div class="manga-detail">
+                                                <h3 class="manga-name">
+                                                    <a href="{% url "book-detail" book.slug %}" title="{{ book.name }}">{{ book.name }}</a>
+                                                </h3>
+                                                <div class="fd-infor">
+                                                    <span class="fdi-item fdi-cate">
+                                                        {% for genre in book.genres.all|slice:":3" %}
+                                                            {% if forloop.last %}
+                                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>
+                                                            {% else %}
+                                                                <a href="{% url "genre" genre.slug %}">{{ genre.name }}</a>,
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="tab-content">
+                                                    <div id="spc-chap-4" class="tab-pane active show">
+                                                        <div class="fd-list">
+                                                            {% for chapter in book.list_chapters|slice:":3" %}
+                                                                <div class="fdl-item">
+                                                                    <div class="chapter">
+                                                                        <a href="{% url "read-book" book.slug chapter.chap|floatformat %}">
+                                                                            <i class="fas fa-book mr-2"></i>Chap {{ chapter.chap|floatformat }} [EN]
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="release-time"></div>
+                                                                    <div class="clearfix"></div>
+                                                                </div>     
+                                                            {% endfor %}                                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    {% endfor %}                 
+                                    <div class="clearfix"></div>                       
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="pre-pagination mt-4">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination pagination-lg justify-content-center">
+                                            {% if page_obj %}
+                                                {% if page_obj.has_previous %}
+                                                    <li class="page-item"><a title="First" class="page-link" href="/filter?type={{type_selected}}&amp;status={{status_selected}}&amp;demographic={{demographic_selected}}&amp;create_at={{create_at_selected}}&amp;min_chap={{min_chap_selected}}&amp;sy={{sy}}&amp;ey={{ey}}&amp;sort={{sort}}&amp;genres={{genres_selected}}&amp;page=1">«</a></li>
+                                                    <li class="page-item"><a title="Previous" class="page-link" href="/filter?type={{type_selected}}&amp;status={{status_selected}}&amp;demographic={{demographic_selected}}&amp;create_at={{create_at_selected}}&amp;min_chap={{min_chap_selected}}&amp;sy={{sy}}&amp;ey={{ey}}&amp;sort={{sort}}&amp;genres={{genres_selected}}&amp;page={{ page_obj.previous_page_number }}">‹</a></li>
+                                                {% endif %}
+                                                {% for num in page_obj.paginator.page_range %}
+                                                    {% if num > page_obj.number|add:'-1'|add:'-2' and num < page_obj.number|add:'-1'|add:4 %}
+                                                        {% if num == page_obj.number %}
+                                                            <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                                        {% else %}
+                                                            <li class="page-item"><a title="Page 2" class="page-link" href="/filter?type={{type_selected}}&amp;status={{status_selected}}&amp;demographic={{demographic_selected}}&amp;create_at={{create_at_selected}}&amp;min_chap={{min_chap_selected}}&amp;sy={{sy}}&amp;ey={{ey}}&amp;sort={{sort}}&amp;genres={{genres_selected}}&amp;page={{num}}">{{ num }}</a></li>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if page_obj.has_next %}
+                                                    <li class="page-item"><a title="Next" class="page-link" href="/filter?type={{type_selected}}&amp;status={{status_selected}}&amp;demographic={{demographic_selected}}&amp;create_at={{create_at_selected}}&amp;min_chap={{min_chap_selected}}&amp;sy={{sy}}&amp;ey={{ey}}&amp;sort={{sort}}&amp;genres={{genres_selected}}&amp;page={{ page_obj.next_page_number }}">›</a></li>
+                                                    <li class="page-item"><a title="Last" class="page-link" href="/filter?type={{type_selected}}&amp;status={{status_selected}}&amp;demographic={{demographic_selected}}&amp;create_at={{create_at_selected}}&amp;min_chap={{min_chap_selected}}&amp;sy={{sy}}&amp;ey={{ey}}&amp;sort={{sort}}&amp;genres={{genres_selected}}&amp;page={{ page_obj.paginator.num_pages }}">»</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <!--End: Section film list-->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+var genres_selected = $('#f-genre-ids').val() == '' ? [] : $('#f-genre-ids').val().split(',');
+if(Array.isArray(genres_selected)){
+    genres_selected.map((value, index, array) => {
+        $(`.item.f-genre-item[data-id=${value}]`).toggleClass('active');
+    });
+}
+
+
+$('.item.f-genre-item').click(function(e){
+    var genre_ids = []
+    $(this).toggleClass('active');
+    $genres = $('.item.f-genre-item.active');
+    $genres.each(function() {
+        var data_id = $(this).attr('data-id');
+        genre_ids.push(data_id);
+    });
+    $('#f-genre-ids').val(genre_ids);
+});
+</script>
+{% include "includes/footer.html" %}
+{% endblock content %}
+

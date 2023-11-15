@@ -1,0 +1,113 @@
+{% load custom_filters %}
+
+<div id="main-wrapper" class="page-layout page-read page-read-hoz">
+    <div class="container">
+        <div class="container-reader-hoz">
+            <div id="divslide">
+                <div class="divslide-wrapper" data-page-size="2" style="overflow: hidden;">
+                    {% with chapter_image|pair_items as item_pairs %}
+                        {% for item in item_pairs %}
+                            <div class="ds-item {% if item|length == 2 %}ds-sbs{% endif %} {% if forloop.counter == 1 %}active{% endif %}">
+                            {% for image in item %}
+                                <div data-page="{{image.page|add:1}}" class="ds-image {% if item|length == 2 %}magictime{% endif %} {% if forloop.counter == 1 %}dsi-b perspectiveLeftReturn{% else %}dsi-a perspectiveRightReturn{% endif %} shuffled loaded" data-url="{{image.url}}">
+                                    <div class="card-loading">
+                                        <div class="c-l-area">
+                                            <div class="paper-loading"></div>
+                                            <p class="mb-0">Loading...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}  
+                            </div> 
+                        {% endfor %}
+                    {% endwith %}
+                    <div class="ds-item">
+                        <div data-page="{{chapter_image|length|add:1}}" class="ds-image">
+                            {% if next_chapter %}
+                                <div class="sc-btn" id="hoz-btn-next">
+                                    <div class="block" id="text-next">Chap {{ next_chapter.chap|floatformat }}<div class="name-chapt">{{ next_chapter.tit }}</div></div>
+                                    <a href="{% url "read-book" next_chapter.book.slug next_chapter.chap|floatformat %}" class="btn btn-warning">Read now</a>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="sc-rating">
+                                <div class="sc-dt-rate" id="vote-info">
+                                    <div class="block-rating {% if user.is_authenticated and user|check_vote:book %}rated{% endif %}">
+                                        <div class="rating-result">
+                                            <div class="rr-mark float-left">
+                                                <strong>
+                                                    <i class="fas fa-star text-warning mr-2"></i>{{ book.vote_star }}
+                                                </strong> 
+                                                <small>({{ book.vote_count }} voted)</small>
+                                            </div>
+                                            <div class="rr-title float-right">Vote now</div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="description">What do you think about this {{ book.type.name }}?</div>
+                                        <div class="button-rate">
+                                            <button type="button" class="btn btn-emo rate-bad btn-vote {% if user.is_authenticated and user|get_vote:book == 1 %}emo-rated{% endif %}" data-mark="1"
+                                                data-id="{{ book.id }}">😩<span class="ml-2">Boring</span>
+                                            </button>
+                                            <button type="button" class="btn btn-emo rate-normal btn-vote {% if user.is_authenticated and user|get_vote:book == 5 %}emo-rated{% endif %}" data-mark="5" 
+                                                data-id="{{ book.id }}">😃<span class="ml-2">Great</span>
+                                            </button>
+                                            <button type="button" class="btn btn-emo rate-good btn-vote {% if user.is_authenticated and user|get_vote:book == 10 %}emo-rated{% endif %}" data-mark="10"
+                                                data-id="{{ book.id }}">🤩<span class="ml-2">Amazing</span>
+                                            </button>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="navi-buttons hoz-controls hoz-controls-ltr" style="display: none;">
+                    <div class="nabu-fill">
+                        <div class="nf-item nf-double active" data-toggle="tooltip" title="Double Page">
+                            <span></span><span></span></div>
+                        <div class="nf-item nf-single" data-toggle="tooltip" title="Single Page"><span></span></div>
+                    </div>
+                    <div class="nabu-page"><span><span class="hoz-current-index">1 - 2</span> / <span class="hoz-total-image">{{ chapter_image|length|add:1 }}</span></span></div>
+                    <a onclick="hozNextImage()" href="javascript:void(0)" class="nabu nabu-right hoz-next">
+                        <div class="navi-button navi-button-next"><i class="fas fa-angle-right"></i><span>Next</span>
+                        </div>
+                    </a>
+                    <a onclick="hozPrevImage()" href="javascript:void(0)" class="nabu nabu-left hoz-prev disabled">
+                        <div class="navi-button navi-button-prev"><i class="fas fa-angle-left"></i><span>Prev</span>
+                        </div>
+                    </a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="navi-buttons hoz-controls hoz-controls-rtl"style="display: none;">
+                    <div class="nabu-fill">
+                        <div class="nf-item nf-double active" data-toggle="tooltip" title="Double Page">
+                            <span></span><span></span></div>
+                        <div class="nf-item nf-single" data-toggle="tooltip" title="Single Page"><span></span></div>
+                    </div>
+                    <div class="nabu-page"><span><span class="hoz-current-index">1 - 2</span> / <span class="hoz-total-image">{{ chapter_image|length|add:1 }}</span></span></div>
+                    <a onclick="hozNextImage()" href="javascript:void(0)" class="nabu nabu-left hoz-next">
+                        <div class="navi-button navi-button-prev"><i class="fas fa-angle-left"></i><span>Next</span>
+                        </div>
+                    </a>
+                    <a onclick="hozPrevImage()" href="javascript:void(0)" class="nabu nabu-right hoz-prev disabled">
+                        <div class="navi-button navi-button-next"><i class="fas fa-angle-right"></i><span>Prev</span>
+                        </div>
+                    </a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="photo-navigation hoz-controls hoz-controls-ltr" style="display: none;">
+                    <div class="photo-button photo-button-next hoz-next-hide" onclick="hozNextImage()"></div>
+                    <div class="photo-button photo-button-prev hoz-prev-hide " onclick="hozPrevImage()"></div>
+                </div>
+                <div class="photo-navigation hoz-controls hoz-controls-rtl" style="display: none;">
+                    <div class="photo-button photo-button-prev hoz-next-hide" onclick="hozNextImage()"></div>
+                    <div class="photo-button photo-button-next hoz-prev-hide" onclick="hozPrevImage()"></div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>

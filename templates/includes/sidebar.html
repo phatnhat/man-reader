@@ -1,0 +1,35 @@
+<div id="sidebar_menu_bg"></div>
+<div id="sidebar_menu">
+    <a class="sb-uimode" href="javascript:;" id="sb-toggle-mode"><i class="fas fa-moon mr-2"></i><span class="text-dm">Dark Mode</span><span class="text-lm">Light Mode</span></a>
+    <button class="btn toggle-sidebar"><i class="fas fa-angle-left"></i></button>
+    <ul class="nav sidebar_menu-list">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:;" title="Types">Types</a>
+            <div class="types-sub">
+                {% for type in typies %}
+                    <a class="ts-item" href="{% url "type" type.slug %}">{{ type.name }}</a>
+                    {% endfor %}
+            </div>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/completed" title="Completed">Completed</a></li>
+        <li class="nav-item"><a class="nav-link" href="/az-list" title="A-Z List">A-Z List</a></li>
+        <li class="nav-item"><a class="nav-link" href="/random" title="Random">Random</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" target="_blank" title="News">News</a></li>
+        <li class="nav-item">
+            <div class="nav-link"><strong>Genres</strong></div>
+            <div class="sidebar_menu-sub">
+                <ul class="nav sub-menu">
+                    {% for genre in genres %}
+                        <li class="nav-item"><a class="nav-link" href="{% url "genre" genre.slug %}">{{ genre.name }}</a></li>
+                    {% endfor %}
+                    <li class="nav-item nav-more">
+                        <a class="nav-link"><i class="fas fa-plus mr-2"></i>More</a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>

@@ -1,0 +1,22 @@
+{% if page == "detail" %}
+<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-light btn-fav {% if action_type != 0 %}active{% endif %}">
+    <i class="far fa-bookmark"></i>
+</a>
+{% elif page == "read" %}
+<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm hrr-btn {% if action_type != 0 %}active{% endif %}">
+    <i class="far fa-bookmark"></i><span class="hrr-name">Reading List</span>
+</a>
+{% endif %}
+<div class="dropdown-menu dropdown-menu-model" aria-labelledby="ssc-list">
+    {% for rl in reading_list %}
+        <a class="rl-item dropdown-item {% if rl.id == action_type %}added{% endif %}" data-type="{{rl.id}}" data-book-id="{{book.id}}" data-page="{{page}}" 
+            href="javascript:;">{{ rl.name }}
+        </a>
+    {% endfor %}
+    {% if action_type != 0 %}
+        <a class="rl-item dropdown-item text-danger" data-book-id="{{book.id}}" data-type="0" data-page="{{page}}" 
+            href="javascript:;">Remove
+        </a>
+    {% endif %}
+</div>
+<div class="clearfix"></div>

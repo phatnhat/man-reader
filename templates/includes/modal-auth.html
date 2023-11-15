@@ -1,0 +1,140 @@
+<div class="modal fade premodal premodal-login" id="modal-auth" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="tab-content">
+                <!--Begin: tab login-->
+                <div id="modal-tab-login" class="tab-pane active">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modallogintitle">Welcome back!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert" id="login-noti" style="display: none;"></div>
+                        <form class="preform" id="login-form" method="POST" action="{% url "login" %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="prelabel" for="email">Email address</label>
+                                <input type="text" class="form-control" id="email" placeholder="name@email.com" name="email" required="">
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Password" name="password" required="">
+                            </div>
+                            <div class="form-check custom-control custom-checkbox">
+                                <div class="float-left">
+                                    <input type="checkbox" class="custom-control-input" id="remember" name="remember" value="1">
+                                    <label class="custom-control-label" for="remember">Remember me</label>
+                                </div>
+                                <div class="float-right">
+                                    <a href="javascript:;" data-show="#modal-tab-forgot" class="link-highlight text-forgot forgot-tab-link">Forgot
+                                        password?</a>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="form-group login-btn mt-4 mb-2">
+                                <button class="btn btn-primary btn-block">Sign-in</button>
+                                <div class="loading-relative" id="login-loading" style="display: none;">
+                                    <div class="loading">
+                                        <div class="span1"></div>
+                                        <div class="span2"></div>
+                                        <div class="span3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer text-center">
+                        Don't have an account? <a data-show="#modal-tab-register" class="link-highlight register-tab-link">Register</a>
+                    </div>
+                </div>
+                <!--End: tab login-->
+                <!--Begin: tab forgot-->
+                <div id="modal-tab-forgot" class="tab-pane fade">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modallogintitle3">Reset Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert" id="forgot-noti" style="display: none;"></div>
+                        <form class="preform" method="post" id="forgot-form" action="{% url "forgot" %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="prelabel" for="forgot-email">Your Email</label>
+                                {{ forgot_form.email }}
+                                {% comment %} <input type="text" class="form-control" id="forgot-email" name="email" placeholder="name@email.com" required=""> {% endcomment %}
+                            </div>
+                            <div class="form-group login-btn mt-4">
+                                <button class="btn btn-primary btn-block">Submit</button>
+                                <div class="loading-relative" id="forgot-loading" style="display: none;">
+                                    <div class="loading">
+                                        <div class="span1"></div>
+                                        <div class="span2"></div>
+                                        <div class="span3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <a data-show="#modal-tab-login" class="link-highlight login-tab-link"><i class="fa fa-angle-left mr-2"></i>Back to
+                            Sign-in</a>
+                    </div>
+                </div>
+                <!--End: tab forgot-->
+                <!--Begin: tab register-->
+                <div id="modal-tab-register" class="tab-pane fade">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modallogintitle2">Create an Account</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert" id="register-noti" style="display: none;"></div>
+                        <form class="preform" id="register-form" method="post" method="POST" action="{% url "register" %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="prelabel" for="re-username">Your name</label>
+                                {{ register_form.name }}
+                                {% comment %} <input type="text" class="form-control" id="re-username" placeholder="Name" name="name" required=""> {% endcomment %}
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="re-email">Email address</label>
+                                {{ register_form.email }}
+                                {% comment %} <input type="text" class="form-control" id="re-email" placeholder="name@email.com" name="email" required=""> {% endcomment %}
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="re-password">Password</label>
+                                {{ register_form.password }}
+                                {% comment %} <input type="password" class="form-control" id="re-password" placeholder="Password" name="password" required=""> {% endcomment %}
+                            </div>
+                            <div class="form-group">
+                                <label class="prelabel" for="re-confirmpassword">Confirm Password</label>
+                                {{ register_form.confirm_password }}
+                                {% comment %} <input type="password" class="form-control" id="re-confirmpassword" placeholder="Confirm Password" name="cf_password" required=""> {% endcomment %}
+                            </div>
+                            <div class="form-group login-btn mt-5 mb-0">
+                                <button class="btn btn-primary btn-block">Sign-up</button>
+                                <div class="loading-relative" id="register-loading" style="display: none;">
+                                    <div class="loading">
+                                        <div class="span1"></div>
+                                        <div class="span2"></div>
+                                        <div class="span3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer text-center">
+                        Have an account? <a data-show="#modal-tab-login" class="link-highlight login-tab-link">Sign-in</a>
+                    </div>
+                </div>
+                <!--End: tab register-->
+            </div>
+        </div>
+    </div>
+</div>
