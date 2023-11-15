@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f@zp)j0&egr-ift(q7gqcui08krzg5fzexz)b=7nabyee^fb$^'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -168,8 +168,8 @@ USE_TZ = True
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 
-DISQUS_API_KEY = 'khDdqtQgoK141JSDtosqjkx0Gc9gbLZRT80r5izpsggYZjXEJwCboS6FM3xiHoqm'
-DISQUS_WEBSITE_SHORTNAME = 'http-127-0-0-1-8000-crncxz1p9c'
+DISQUS_API_KEY = config('DISQUS_API_KEY')
+DISQUS_WEBSITE_SHORTNAME = config('DISQUS_WEBSITE_SHORTNAME')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
