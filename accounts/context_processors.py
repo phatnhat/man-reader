@@ -1,4 +1,4 @@
-from .models import Avatar, AvatarHashtag
+from .models import Avatar, AvatarHashtag, Notification
 from .forms import LoginForm, RegisterForm, ForgotForm
 
 def get_hashtag(request):
@@ -10,3 +10,9 @@ def get_form(request):
     register_form = RegisterForm()
     forgot_form = ForgotForm()
     return dict(login_form=login_form,register_form=register_form,forgot_form=forgot_form)
+
+def get_count_notifications(request):
+    if request.user.is_authenticated:
+        count = Notification.objects.filter(user=request.user, mark=False).all().count()
+        return dict(noti_count=count)
+    return dict(noti_count=None)

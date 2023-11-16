@@ -90,6 +90,20 @@
                 </div>
             </div>
             <div id="login-state" style="float: left;">
+                <a href="{% url "notifications" %}" class="hr-notifications user-notification">
+                    <div class="hrn-icon" >
+                        {% if noti_count > 0 %}
+                            <span class="number total-notify count">
+                                {% if noti_count >= 10 %}
+                                    9+
+                                {% else %}
+                                    {{ noti_count }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </a>
                 <div id="user-slot">
                     <div class="header_right-user {% if user.is_authenticated %}logged{% endif %}">
                         {% if user.is_authenticated %}

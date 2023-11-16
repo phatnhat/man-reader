@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -81,6 +81,7 @@ TEMPLATES = [
                 'accounts.context_processors.get_hashtag',
                 'accounts.context_processors.get_form',
                 'book.context_processors.get_readinglist',
+                'accounts.context_processors.get_count_notifications',
             ],
         },
     },
