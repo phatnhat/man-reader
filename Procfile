@@ -1,0 +1,1 @@
+web: gunicorn manReader_main.wsgi --log-file -

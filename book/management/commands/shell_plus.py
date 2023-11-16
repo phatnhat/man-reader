@@ -10,11 +10,9 @@ from django.contrib import messages, auth
 from book.comick import ComicK
 from django.db.models import Avg
 from book.utils import sort_by
+from django.conf import settings
 
 class Command(BaseCommand):   
     def handle(self, *args, **kwargs): 
-        user = User.objects.get(email='nhatphay7@gmail.com')
-        chapter = Chapter.objects.all()[0]
-        user_reading = UserReading.objects.filter(book=chapter.book).all()
-        users = User.objects.filter(users_reading__in=user_reading)
-        print(users)
+        project_name = settings.SETTINGS_MODULE.split('.')[0]
+        print(project_name)
