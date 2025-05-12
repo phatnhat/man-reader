@@ -109,7 +109,7 @@
                                                 {% if num == page_obj.number %}
                                                     <li class="page-item active"><a class="page-link">{{ num }}</a></li>
                                                 {% else %}
-                                                    <li class="page-item"><a title="Page 2" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{num}}">{{ num }}</a></li>
+                                                    <li class="page-item"><a title="Page {{num}}" class="page-link" href="/genre/{{genre}}?sort={{sort}}&amp;page={{num}}">{{ num }}</a></li>
                                                 {% endif %}
                                             {% endif %}
                                         {% endfor %}

@@ -143,6 +143,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     'manReader_man/static'
 ]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'manReader_main/static'),
+# ]
 
 # Media files configuration
 MEDIA_URL = 'media/'
